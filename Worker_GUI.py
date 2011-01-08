@@ -1,4 +1,4 @@
-# coding=utf-8
+# coding=gbk
 #!/usr/bin/env python
 import wx
 USERNAME = u"Ô±¹¤ÐÕÃû"
