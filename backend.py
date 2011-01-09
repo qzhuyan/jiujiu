@@ -34,6 +34,7 @@ class RecordClient():
     def __init__(self):
         #do some init..
         #初始化 工号表
+        pass
 
     #Get username via userid
     def getUserId(self):
@@ -74,12 +75,8 @@ class RecordClient():
         for parm in self.ParmDict:
             self.ParmDict[parm] = raw_input("请输入"+parm+":\n\t")
 
-    def today(self):
-        year = datetime.datetime.now().year
-        month = datetime.datetime.now().month
-        day = datetime.datetime.now().day
-        return str(year)+"年"+str(month)+"月"+str(day)+"日"
-
+    def time_now(self):
+        return str(datetime.datetime.now())
 
     def updateDB(self):
             print "正在写入数据库.....\n"
@@ -88,7 +85,7 @@ class RecordClient():
             wb = copy(rb)
             row = wb.get_sheet(self.OutFileSheetNumber).row(rb.sheets()[self.OutFileSheetNumber].nrows)
             
-            row.write(1,encode(self.today()))
+            row.write(1,encode(self.time_now().split('.')[0]))
             row.write(2,encode(self.userid))
             row.write(3,encode(self.username))
             row.write(4,encode(self.Product))
