@@ -5,6 +5,8 @@ import datetime;
 import xlrd
 from xlutils.copy import copy
 from xlrd import open_workbook
+import sys, traceback
+from frontEnd import FrontEnd
 
 
 class RecordClient():
@@ -36,9 +38,19 @@ class RecordClient():
         #初始化 工号表
         pass
 
+    def gui_input(self,MSG,Title="UserInput"):
+        if type(MSG) != u"aaa":
+            MSG = unicode(MSG,'cp936')
+        dialog = FrontEnd(Title,MSG)
+        return unicode(dialog.queryUser(MSG))
+    
+    def ask_input(self,MSG,Title="UserInput"):
+        return self.gui_input(MSG,Title)
+        #return raw_input(MSG).strip()
+        
     #Get username via userid
     def getUserId(self):
-        self.userid = raw_input(self.AskUserIdString).strip()
+        self.userid = self.ask_input(self.AskUserIdString)
         return self.userid
 
     def getUserName(self,id):
@@ -61,8 +73,7 @@ class RecordClient():
         
     def scanbarcode(self):
         #Todo: add some timeout
-        self.MPbarcode = raw_input("Please Scan Barcode!\n\t").strip()
-        print "\t\t====Get Barcode:"+self.MPbarcode+"====\n"
+        self.MPbarcode = str(self.ask_input("Please Scan Barcode!\n\t"))
         return self.MPbarcode
 
     def getMachineAndProduct(self):
@@ -73,7 +84,8 @@ class RecordClient():
 
     def queryParms(self):
         for parm in self.ParmDict:
-            self.ParmDict[parm] = raw_input("请输入"+parm+":\n\t")
+            userinput = self.ask_input("请输入"+parm+":\n\t")
+            self.ParmDict[parm] = userinput
 
     def time_now(self):
         return str(datetime.datetime.now())
@@ -86,7 +98,7 @@ class RecordClient():
             row = wb.get_sheet(self.OutFileSheetNumber).row(rb.sheets()[self.OutFileSheetNumber].nrows)
             
             row.write(1,encode(self.time_now().split('.')[0]))
-            row.write(2,encode(self.userid))
+            row.write(2,self.userid)
             row.write(3,encode(self.username))
             row.write(4,encode(self.Product))
             row.write(5,encode(self.Machine))
@@ -96,7 +108,12 @@ class RecordClient():
                 for col in range(sheet.ncols):
                     cellValue = sheet.cell(self.OutFileKeyRowNumber,col).value
                     if cellValue == unicode(parm,'cp936'):
-                        row.write(col,encode(self.ParmDict[parm]))
+                        data = self.ParmDict[parm]
+                        if type(data) == type(u"hh"):
+                            writedata = data
+                        else:
+                            writedata = encode(data)
+                        row.write(col,writedata)
 
             #保存到文件
             wb.save(self.FileName)
@@ -118,39 +135,43 @@ def mainloop():
                 this = RecordClient()
                 UserId = this.getUserId()
                 UserName = this.getUserName(UserId)
-                if raw_input("请确认姓名(是=y,不是=n)：" + UserName+"\n") == "y":
+                if this.ask_input("请确认姓名(是=y,不是=n)：" + UserName+"\n") == "y":
                     is_name_confirmed = True
                     
             is_MPS_confirmed = False
             while is_MPS_confirmed == False:         
                 Machine, Product = this.getMachineAndProduct()
-                print "=====请确认以下信息====="
-                print "姓名" + UserName+"\n"
-                print "机器号：" + Machine +"\n"
-                print "产品：" + Product +"\n"
+                msg =  "=====请确认以下信息====="
+                msg = msg+ "姓名: " + UserName+"\n"
+                msg = msg +  "机器号：" + Machine +"\n"
+                msg = msg + "产品：" + Product +"\n"
                 Shift = this.calculateShift()
-                print "班次" + Shift +"\n"
-                if raw_input("(是=y)：" + UserName+"\n") == "y":
+                msg = msg +  "班次: " + Shift +"\n"
+                msg = msg + "(是=y)：" + UserName+"\n"
+                if this.ask_input(msg) == "y":
+                    msg = ""
                     is_MPS_confirmed = True
 
             is_Parms_confirmed = False
             while is_Parms_confirmed == False:
                 this.queryParms()
-                print "=====请确认以下信息,你这次输入的是====="
+                msg = "=====请确认以下信息,你这次输入的是=====\n"
                 for each in this.ParmDict:
-                    print each+":\t"+this.ParmDict[each];
-                if raw_input("(正确=y)：" + UserName+"\n") == "y":
+                    tmpV = this.ParmDict[each]
+                    print type(each)
+                    msg = msg + each +":"+str(tmpV)+"\n"
+                print msg
+                if this.ask_input(msg) == "y":
                     is_Parms_confirmed = True
             this.updateDB()
             this.printViaPrinter()
 
                 
-        #异常处理
+            #        异常处理
         except Exception as excep1:
+            exceptionTraceback = sys.exc_info()
             print "Error found ! please mailto:mscame@gmail.com"
-            print type(Exception)
-            print excep1.args
-            
+            traceback.print_exc(file=sys.stdout)
         
 if __name__ == '__main__':    
     mainloop()
