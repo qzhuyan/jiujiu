@@ -7,7 +7,7 @@ from xlutils.copy import copy
 from xlrd import open_workbook
 import sys, traceback
 from frontEnd import FrontEnd
-
+import wx
 
 class RecordClient():
     AskUserIdString = "请输入员工号\n"
@@ -36,6 +36,7 @@ class RecordClient():
     def __init__(self):
         #do some init..
         #初始化 工号表
+
         pass
 
     def gui_input(self,MSG,Title="UserInput"):
@@ -128,6 +129,7 @@ def encode(str):
     return unicode(str,'cp936')
 
 def mainloop():
+    app = wx.PySimpleApp()    
     while True :
         try:
             is_name_confirmed = False
@@ -158,7 +160,6 @@ def mainloop():
                 msg = "=====请确认以下信息,你这次输入的是=====\n"
                 for each in this.ParmDict:
                     tmpV = this.ParmDict[each]
-                    print type(each)
                     msg = msg + each +":"+str(tmpV)+"\n"
                 print msg
                 if this.ask_input(msg) == "y":
