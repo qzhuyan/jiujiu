@@ -39,10 +39,12 @@ class BigBox(wx.Dialog):
         self.panelSizer = wx.BoxSizer(wx.VERTICAL)
         
 
-        font_Ans = wx.Font(40, wx.DECORATIVE, 
-                       wx.ITALIC, wx.NORMAL)
+        font_Ans = wx.Font(90, wx.DECORATIVE,
+                           wx.NORMAL,
+                           wx.NORMAL)
         font_Question = wx.Font(30, wx.DECORATIVE, 
-                       wx.ITALIC, wx.NORMAL)
+                                wx.NORMAL,
+                                wx.NORMAL)
 
         QuestionText = wx.StaticText(self, -1,Msg,size=(-1,300),style = wx.ALIGN_CENTER)
         QuestionText.SetForegroundColour('black') 

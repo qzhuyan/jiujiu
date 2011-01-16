@@ -10,7 +10,7 @@ from frontEnd import FrontEnd
 import wx
 
 class RecordClient():
-    AskUserIdString = "请输入员工号\n"
+    AskUserIdString = "\n请输入员工号:\n"
     
     #这里定义员工号和员工姓名 a1是员工号，周星驰是员工姓名
     UserDict = dict(a1="周星驰",a2="梁朝伟",a3="猪八戒",a4="孙悟空")
