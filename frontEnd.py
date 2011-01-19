@@ -2,8 +2,7 @@
 #!/usr/bin/env python
 
 import wx
-
-
+import time
     
 
 class FrontEnd_Old():
@@ -34,7 +33,6 @@ class BigBox(wx.Dialog):
         self.Style = Style
         
     def queryUser(self,Msg,DefVal="",title="wakaka"):
-
         self.MainSizer = wx.BoxSizer(wx.VERTICAL)
         self.panelSizer = wx.BoxSizer(wx.VERTICAL)
         
@@ -49,10 +47,11 @@ class BigBox(wx.Dialog):
         QuestionText = wx.StaticText(self, -1,Msg,size=(-1,300),style = wx.ALIGN_CENTER)
         QuestionText.SetForegroundColour('black') 
         QuestionText.SetBackgroundColour('white')
+        self.SetBackgroundColour('white')
         QuestionText.SetFont(font_Question)
         
         self.AnsBox = wx.TextCtrl(self, -1, "",
-                               size = (-1,400),
+                               size = (600,400),
                                style = wx.TE_PROCESS_ENTER |wx.ALIGN_CENTER ^(wx.TE_PASSWORD) )
 
         self.Bind(wx.EVT_TEXT_ENTER, self.OnEnterPushed, self.AnsBox)
@@ -66,7 +65,7 @@ class BigBox(wx.Dialog):
         self.button.SetDefault()
         
         self.panelSizer.Add(QuestionText,10, flag=wx.EXPAND)
-        self.panelSizer.Add(self.AnsBox,10, flag=wx.EXPAND)
+        self.panelSizer.Add(self.AnsBox,10, border = 30 ,flag=wx.ALL|wx.ALIGN_CENTER)
         self.panelSizer.Add(self.button,1, flag=wx.EXPAND)
         self.SetSizer(self.panelSizer)
         self.Fit()
@@ -81,6 +80,7 @@ class BigBox(wx.Dialog):
         print "OK pushed"
 
     def OnEnterPushed(self, event):
+        time.sleep(2)
         self.EndModal(wx.ID_OK)
         pass
     
