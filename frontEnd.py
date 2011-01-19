@@ -87,6 +87,13 @@ class BigBox(wx.Dialog):
 class FrontEnd(BigBox):
     pass
 
+class UnitTest():
+    def __init__():
+        pass
+    
+    def test1():
+        pass
+
 if __name__ == '__main__':
     app = wx.PySimpleApp()
     frontIns = FrontEnd("who are you?","yourName?")
