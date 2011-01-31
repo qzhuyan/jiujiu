@@ -60,13 +60,13 @@ class BigBox(wx.Dialog):
         self.AnsBox.SetBackgroundColour('black')
         self.AnsBox.SetFont(font_Ans)
         
-        self.button = wx.Button(self, wx.ID_OK, "OK",style=wx.ID_OK, pos=(50, 20)) 
+        #self.button = wx.Button(self, wx.ID_OK, "OK",style=wx.ID_OK, pos=(50, 20)) 
         #self.Bind(wx.EVT_BUTTON, self.OnClick, self.button)
-        self.button.SetDefault()
+        #self.button.SetDefault()
         
-        self.panelSizer.Add(QuestionText,10, flag=wx.EXPAND)
-        self.panelSizer.Add(self.AnsBox,10, border = 30 ,flag=wx.ALL|wx.ALIGN_CENTER)
-        self.panelSizer.Add(self.button,1, flag=wx.EXPAND)
+        self.panelSizer.Add(QuestionText,10, border =20, flag=wx.ALL|wx.ALIGN_CENTER)
+        self.panelSizer.Add(self.AnsBox,10, border = 60 ,flag=wx.ALL|wx.ALIGN_CENTER)
+        #self.panelSizer.Add(self.button,1, flag=wx.EXPAND)
         self.SetSizer(self.panelSizer)
         self.Fit()
         self.ShowFullScreen(True)
