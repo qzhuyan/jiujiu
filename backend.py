@@ -7,6 +7,7 @@ from xlutils.copy import copy
 from xlrd import open_workbook
 import sys, traceback
 from frontEnd import FrontEnd
+from config import JiuJiuConfig
 import wx
 
 class RecordClient():
@@ -25,7 +26,7 @@ class RecordClient():
     ParmDict = {"上机数":0,"接班模数":0,"交班模数":0,"每模数":0}
 
     #这里定义输出excel文件
-    FileName = "c:\Documents and Settings\Administrator\桌面\Book1.xls"
+    FileName = "c:\Documents and Settings\Administrator\桌面\Book3.xls"
 
     #这里定义输出到excel文件第几个sheet(第一页为0)
     OutFileSheetNumber = 0
@@ -34,15 +35,14 @@ class RecordClient():
     OutFileKeyRowNumber = 1
         
     def __init__(self):
-        #do some init..
-        #初始化 工号表
-
+        self.configData = JiuJiuConfig()
+        self.FileName = self.configData.get_GLCvalue("OutPutTable").encode('cp936')
         pass
 
     def gui_input(self,MSG,Title="UserInput"):
         if type(MSG) != u"aaa":
             MSG = unicode(MSG,'cp936')
-        dialog = FrontEnd(Title,MSG)
+        dialog = FrontEnd(Title,MSG,Config = self.configData)
         return unicode(dialog.queryUser(MSG))
     
     def ask_input(self,MSG,Title="UserInput"):
@@ -173,6 +173,7 @@ def mainloop():
             exceptionTraceback = sys.exc_info()
             print "Error found ! please mailto:mscame@gmail.com"
             traceback.print_exc(file=sys.stdout)
+            input()
         
 if __name__ == '__main__':    
     mainloop()

@@ -3,7 +3,7 @@
 
 import wx
 import time
-    
+from config import JiuJiuConfig
 
 class FrontEnd_Old():
     def __init__(self,Title,QueryMsg,DefaultValue="",Style=wx.OK|wx.CANCEL):
@@ -24,9 +24,12 @@ class FrontEnd_Old():
         return Value
 
 class BigBox(wx.Dialog):
-    def __init__(self,Title,QueryMsg,DefaultValue="",Style=wx.OK|wx.CANCEL):
+    def __init__(self,Title,QueryMsg,DefaultValue="",Style=wx.OK|wx.CANCEL,Config=""):
         wx.Dialog.__init__(self, None, -1, Title, size=(250, 210))
-
+        self.Is_FullScreen = False
+        if Config != "":
+            if Config.get_GLCvalue('FullScreen') == u"yes":
+                self.Is_FullScreen = True
         self.Title = Title
         self.QueryMsg = QueryMsg
         self.DefaultValue = DefaultValue
@@ -69,12 +72,11 @@ class BigBox(wx.Dialog):
         #self.panelSizer.Add(self.button,1, flag=wx.EXPAND)
         self.SetSizer(self.panelSizer)
         self.Fit()
-        self.ShowFullScreen(True)
+        self.ShowFullScreen(self.Is_FullScreen)
         if self.ShowModal() == wx.ID_OK: 
             Value = self.AnsBox.GetValue()
         self.Destroy()
         return Value
-
         
     def OnClick(self, event):
         print "OK pushed"
@@ -96,14 +98,7 @@ class UnitTest():
 
 if __name__ == '__main__':
     app = wx.PySimpleApp()
-    frontIns = FrontEnd("who are you?","yourName?")
+    thisconfig = JiuJiuConfig()
+    frontIns = FrontEnd("who are you?","yourName?",Config=thisconfig)
     frontIns.queryUser("bl")
-    # app = wx.PySimpleApp()
-    # fe2 = BigBox("What's your name??")
-    # fe2.ShowFullScreen(True)
-    # if fe2.ShowModal() == wx.ID_OK: 
-    #     Value = fe2.AnsBox.GetValue()
-    #     print Value
-    # fe2.Destroy()
-    #app.MainLoop()
 
