@@ -3,6 +3,7 @@
 
 import wx
 import time
+import winsound
 from config import JiuJiuConfig
 
 class FrontEnd_Old():
@@ -82,7 +83,8 @@ class BigBox(wx.Dialog):
         print "OK pushed"
 
     def OnEnterPushed(self, event):
-        time.sleep(2)
+        time.sleep(1)
+        winsound.MessageBeep()
         self.EndModal(wx.ID_OK)
         pass
     
