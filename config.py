@@ -64,6 +64,11 @@ class JiuJiuConfig():
         else:
             return ""
 
+    def get_parsed_worksheet(self,name):
+        return self.ParsedWorksheet[name]
+        
+        
+
         
 if __name__ == '__main__':
     ThisConfig = JiuJiuConfig(ConfigFilePath,GlobalConfigSheetName)

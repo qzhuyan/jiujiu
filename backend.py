@@ -9,11 +9,12 @@ import sys, traceback
 from frontEnd import FrontEnd
 from config import JiuJiuConfig
 import wx
+import time
 
 class RecordClient():
     AskUserIdString = "\n请输入员工号:\n"
     
-    #这里定义员工号和员工姓名 a1是员工号，周星驰是员工姓名
+    #这里定义员工号和员工姓名 a1是员工号，周星驰是员工姓名, 配置文件已支持
     UserDict = dict(a1="周星驰",a2="梁朝伟",a3="猪八戒",a4="孙悟空")
 
     #这里定义几个班，早中晚
@@ -25,7 +26,7 @@ class RecordClient():
     #这里定义要输入的参数。这些参数会在excel的关键字行里被搜索并填入
     ParmDict = {"上机数":0,"接班模数":0,"交班模数":0,"每模数":0}
 
-    #这里定义输出excel文件
+    #这里定义输出excel文件，配置文件已支持
     FileName = "c:\Documents and Settings\Administrator\桌面\Book3.xls"
 
     #这里定义输出到excel文件第几个sheet(第一页为0)
@@ -37,6 +38,8 @@ class RecordClient():
     def __init__(self):
         self.configData = JiuJiuConfig()
         self.FileName = self.configData.get_GLCvalue("OutPutTable").encode('cp936')
+        self.UserDict = self.configData.get_parsed_worksheet('EmploreeTable')
+        self.BarcodeTable = self.configData.get_parsed_worksheet('BarcodeTable')
         pass
 
     def gui_input(self,MSG,Title="UserInput"):
@@ -56,7 +59,7 @@ class RecordClient():
 
     def getUserName(self,id):
         #ToDo: exception
-        self.username = self.UserDict[id];
+        self.username = self.UserDict[id][1].encode('cp936')
         return self.username 
 
     def calculateShift(self):
@@ -78,15 +81,20 @@ class RecordClient():
         return self.MPbarcode
 
     def getMachineAndProduct(self):
-        (M,P) = self.MPdict[self.scanbarcode()]
-        self.Machine = M
-        self.Product = P
-        return M,P
+        self.thisBarcode = self.scanbarcode()
+        self.Product = self.BarcodeTable[self.thisBarcode][4].encode('cp936')
+        self.Machine = self.BarcodeTable[self.thisBarcode][2].encode('cp936')
+        return self.Machine, self.Product
+
 
     def queryParms(self):
-        for parm in self.ParmDict:
-            userinput = self.ask_input("请输入"+parm+":\n\t")
-            self.ParmDict[parm] = userinput
+        #Clean ParmDict
+        self.ParmDict = dict()
+        for parm in self.BarcodeTable[self.thisBarcode][5:]:
+            if parm != "":
+                parm = parm.encode('cp936')
+                userinput = self.ask_input("请输入"+parm+":\n\t")
+                self.ParmDict[parm] = userinput
 
     def time_now(self):
         return str(datetime.datetime.now())
@@ -97,7 +105,7 @@ class RecordClient():
             sheet = rb.sheets()[self.OutFileSheetNumber]
             wb = copy(rb)
             row = wb.get_sheet(self.OutFileSheetNumber).row(rb.sheets()[self.OutFileSheetNumber].nrows)
-            
+            row.write(0,str(time.time()))
             row.write(1,encode(self.time_now().split('.')[0]))
             row.write(2,self.userid)
             row.write(3,encode(self.username))
@@ -137,9 +145,12 @@ def mainloop():
                 this = RecordClient()
                 UserId = this.getUserId()
                 UserName = this.getUserName(UserId)
+                is_name_confirmed = True
+                is_name_confirmed = False
                 if this.ask_input("请确认姓名(是=y,不是=n)：" + UserName+"\n") == "y":
                     is_name_confirmed = True
                     
+            is_MPS_confirmed = True
             is_MPS_confirmed = False
             while is_MPS_confirmed == False:         
                 Machine, Product = this.getMachineAndProduct()
