@@ -140,41 +140,32 @@ def mainloop():
     app = wx.PySimpleApp()    
     while True :
         try:
+            this = RecordClient()
+            UserId = this.getUserId()
+            UserName = this.getUserName(UserId)
+            is_name_confirmed = True
             is_name_confirmed = False
-            while is_name_confirmed == False:
-                this = RecordClient()
-                UserId = this.getUserId()
-                UserName = this.getUserName(UserId)
-                is_name_confirmed = True
-                is_name_confirmed = False
-                if this.ask_input("请确认姓名(是=y,不是=n)：" + UserName+"\n") == "y":
-                    is_name_confirmed = True
-                    
-            is_MPS_confirmed = True
-            is_MPS_confirmed = False
-            while is_MPS_confirmed == False:         
-                Machine, Product = this.getMachineAndProduct()
-                msg =  "=====请确认以下信息====="
-                msg = msg+ "姓名: " + UserName+"\n"
-                msg = msg +  "机器号：" + Machine +"\n"
-                msg = msg + "产品：" + Product +"\n"
-                Shift = this.calculateShift()
-                msg = msg +  "班次: " + Shift +"\n"
-                msg = msg + "(是=y)：" + UserName+"\n"
-                if this.ask_input(msg) == "y":
-                    msg = ""
-                    is_MPS_confirmed = True
+            if this.ask_input("请确认姓名" + UserName+"\n") == "":
+                pass
 
-            is_Parms_confirmed = False
-            while is_Parms_confirmed == False:
-                this.queryParms()
-                msg = "=====请确认以下信息,你这次输入的是=====\n"
-                for each in this.ParmDict:
-                    tmpV = this.ParmDict[each]
-                    msg = msg + each +":"+str(tmpV)+"\n"
-                print msg
-                if this.ask_input(msg) == "y":
-                    is_Parms_confirmed = True
+            Machine, Product = this.getMachineAndProduct()
+            msg =  "=====请确认以下信息====="
+            msg = msg+ "姓名: " + UserName+"\n"
+            msg = msg +  "机器号：" + Machine +"\n"
+            msg = msg + "产品：" + Product +"\n"
+            Shift = this.calculateShift()
+            msg = msg +  "班次: " + Shift +"\n"
+            msg = msg + "" + UserName+"\n"
+            if this.ask_input(msg) == "":
+                msg = ""
+            this.queryParms()
+            msg = "=====请确认以下信息,你这次输入的是=====\n"
+            for each in this.ParmDict:
+                tmpV = this.ParmDict[each]
+                msg = msg + each +":"+str(tmpV)+"\n"
+            print msg
+            if this.ask_input(msg) == "":
+                is_Parms_confirmed = True
             this.updateDB()
             this.printViaPrinter()
 
