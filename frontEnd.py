@@ -36,6 +36,9 @@ class BigBox(wx.Dialog):
         self.DefaultValue = DefaultValue
         self.Style = Style
         
+    def showInfo2User(self,Msg):
+        self.queryUser(Msg,DefVal="Error!Error!",title="send email to mscame@gmail.com ASAP")
+        
     def queryUser(self,Msg,DefVal="",title="wakaka"):
         self.MainSizer = wx.BoxSizer(wx.VERTICAL)
         self.panelSizer = wx.BoxSizer(wx.VERTICAL)
@@ -83,8 +86,7 @@ class BigBox(wx.Dialog):
         print "OK pushed"
 
     def OnEnterPushed(self, event):
-        time.sleep(1)
-        winsound.MessageBeep()
+        beep('beep')
         self.EndModal(wx.ID_OK)
         pass
     
@@ -97,6 +99,10 @@ class UnitTest():
     
     def test1():
         pass
+
+def beep(sound):
+    winsound.PlaySound('%s.wav' % sound, winsound.SND_FILENAME)
+
 
 if __name__ == '__main__':
     app = wx.PySimpleApp()

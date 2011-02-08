@@ -59,6 +59,7 @@ class RecordClient():
 
     def getUserName(self,id):
         #ToDo: exception
+        id = check_and_format_id(id)
         self.username = self.UserDict[id][1].encode('cp936')
         return self.username 
 
@@ -81,11 +82,10 @@ class RecordClient():
         return self.MPbarcode
 
     def getMachineAndProduct(self):
-        self.thisBarcode = self.scanbarcode()
+        self.thisBarcode = check_and_format_id(self.scanbarcode())
         self.Product = self.BarcodeTable[self.thisBarcode][4].encode('cp936')
         self.Machine = self.BarcodeTable[self.thisBarcode][2].encode('cp936')
         return self.Machine, self.Product
-
 
     def queryParms(self):
         #Clean ParmDict
@@ -132,6 +132,13 @@ class RecordClient():
             print "正在打印\n"
             print "打印完成请取票\n"
 
+
+def check_and_format_id(s):
+    try: 
+        float(s)
+        return float(s)
+    except ValueError:
+        return s
             
 def encode(str):
     return unicode(str,'cp936')
@@ -147,7 +154,6 @@ def mainloop():
             is_name_confirmed = False
             if this.ask_input("请确认姓名" + UserName+"\n") == "":
                 pass
-
             Machine, Product = this.getMachineAndProduct()
             msg =  "=====请确认以下信息====="
             msg = msg+ "姓名: " + UserName+"\n"
@@ -168,17 +174,20 @@ def mainloop():
                 is_Parms_confirmed = True
             this.updateDB()
             this.printViaPrinter()
-
-                
             #        异常处理
         except Exception as excep1:
             exceptionTraceback = sys.exc_info()
             print "Error found ! please mailto:mscame@gmail.com"
             traceback.print_exc(file=sys.stdout)
-            input()
+            #TODO: show fault to user!
+            dialog = FrontEnd("","",Config = this.configData)
+            ErrorMessage = this.configData.get_GLCvalue("ErrorPrint").encode('cp936')
+            dialog.showInfo2User(ErrorMessage)
+
         
-if __name__ == '__main__':    
-    mainloop()
+if __name__ == '__main__':
+    while True:
+        mainloop()
     
     
     

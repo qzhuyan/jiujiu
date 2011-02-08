@@ -66,8 +66,18 @@ class JiuJiuConfig():
 
     def get_parsed_worksheet(self,name):
         return self.ParsedWorksheet[name]
+
+    def get(self,id):
+        if RepresentsInt(id):
+            id = float(id)
+        return self
         
-        
+def RepresentsInt(s):
+    try: 
+        int(s)
+        return True
+    except ValueError:
+        return False
 
         
 if __name__ == '__main__':
@@ -78,7 +88,7 @@ if __name__ == '__main__':
 
     if ThisConfig.get_value('nano') == "":
         print "get_value test 1 passed!"
-    if ThisConfig.get_value(u'a1',sheet="EmploreeTable")[0] == u"a1":
+    if ThisConfig.get_value(1.0,sheet="EmploreeTable")[0] == float(u'1'):
         print "get_value test 2 passed!"
     if ThisConfig.get_GLCvalue("FullScreen") == u"yes":
         print "get_GLCvalue test 1 passed!"
