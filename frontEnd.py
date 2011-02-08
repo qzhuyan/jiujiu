@@ -27,10 +27,17 @@ class FrontEnd_Old():
 class BigBox(wx.Dialog):
     def __init__(self,Title,QueryMsg,DefaultValue="",Style=wx.OK|wx.CANCEL,Config=""):
         wx.Dialog.__init__(self, None, -1, Title, size=(250, 210))
-        self.Is_FullScreen = False
+        #Read Config
         if Config != "":
+            #Colors
+            self.QbgC =  Config.get_GLCvalue('QbgC')
+            #Full Screen?
             if Config.get_GLCvalue('FullScreen') == u"yes":
                 self.Is_FullScreen = True
+            else:
+                self.Is_FullScreen = False
+
+                
         self.Title = Title
         self.QueryMsg = QueryMsg
         self.DefaultValue = DefaultValue
@@ -53,8 +60,8 @@ class BigBox(wx.Dialog):
 
         QuestionText = wx.StaticText(self, -1,Msg,size=(-1,300),style = wx.ALIGN_CENTER)
         QuestionText.SetForegroundColour('black') 
-        QuestionText.SetBackgroundColour('white')
-        self.SetBackgroundColour('white')
+        QuestionText.SetBackgroundColour(self.QbgC)
+        self.SetBackgroundColour(self.QbgC)
         QuestionText.SetFont(font_Question)
         
         self.AnsBox = wx.TextCtrl(self, -1, "",
@@ -108,5 +115,5 @@ if __name__ == '__main__':
     app = wx.PySimpleApp()
     thisconfig = JiuJiuConfig()
     frontIns = FrontEnd("who are you?","yourName?",Config=thisconfig)
-    frontIns.queryUser("bl")
+    frontIns.queryUser("Hello, man!")
 

@@ -40,6 +40,8 @@ class RecordClient():
         self.FileName = self.configData.get_GLCvalue("OutPutTable").encode('cp936')
         self.UserDict = self.configData.get_parsed_worksheet('EmploreeTable')
         self.BarcodeTable = self.configData.get_parsed_worksheet('BarcodeTable')
+        self.ErrorMessage = self.configData.get_GLCvalue("ErrorPrint").encode('cp936')
+        self.ConfirmMessage = self.configData.get_GLCvalue("ConfirmMessage").encode('cp936')
         pass
 
     def gui_input(self,MSG,Title="UserInput"):
@@ -51,10 +53,21 @@ class RecordClient():
     def ask_input(self,MSG,Title="UserInput"):
         return self.gui_input(MSG,Title)
         #return raw_input(MSG).strip()
-        
+
+    def ask_input_and_confirm(self,Query,Title="UserInput"):
+        MSG = Query
+        user_confirmed_value = ""
+        while True:
+            thisInput = self.gui_input(MSG,Title)
+            if thisInput == "" and user_confirmed_value != "":
+                return user_confirmed_value
+            else:
+                user_confirmed_value = thisInput
+                MSG = Query + self.ConfirmMessage+str(thisInput) #only input numbers
+
     #Get username via userid
     def getUserId(self):
-        self.userid = self.ask_input(self.AskUserIdString)
+        self.userid = self.ask_input_and_confirm(self.AskUserIdString)
         return self.userid
 
     def getUserName(self,id):
@@ -93,7 +106,7 @@ class RecordClient():
         for parm in self.BarcodeTable[self.thisBarcode][5:]:
             if parm != "":
                 parm = parm.encode('cp936')
-                userinput = self.ask_input("请输入"+parm+":\n\t")
+                userinput = self.ask_input_and_confirm("请输入"+parm+":\n\t")
                 self.ParmDict[parm] = userinput
 
     def time_now(self):
@@ -152,8 +165,6 @@ def mainloop():
             UserName = this.getUserName(UserId)
             is_name_confirmed = True
             is_name_confirmed = False
-            if this.ask_input("请确认姓名" + UserName+"\n") == "":
-                pass
             Machine, Product = this.getMachineAndProduct()
             msg =  "=====请确认以下信息====="
             msg = msg+ "姓名: " + UserName+"\n"
@@ -181,8 +192,7 @@ def mainloop():
             traceback.print_exc(file=sys.stdout)
             #TODO: show fault to user!
             dialog = FrontEnd("","",Config = this.configData)
-            ErrorMessage = this.configData.get_GLCvalue("ErrorPrint").encode('cp936')
-            dialog.showInfo2User(ErrorMessage)
+            dialog.showInfo2User(this.ErrorMessage)
 
         
 if __name__ == '__main__':
