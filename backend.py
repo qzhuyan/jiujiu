@@ -8,6 +8,7 @@ from xlrd import open_workbook
 import sys, traceback
 from frontEnd import FrontEnd
 from config import JiuJiuConfig
+from printer import print_in_paper
 import wx
 import time
 
@@ -121,7 +122,7 @@ class RecordClient():
             sheet = rb.sheets()[self.OutFileSheetNumber]
             wb = copy(rb)
             row = wb.get_sheet(self.OutFileSheetNumber).row(rb.sheets()[self.OutFileSheetNumber].nrows)
-            row.write(0,str(time.time()))
+            row.write(0,self.dataTag)
             row.write(1,encode(self.time_now().split('.')[0]))
             row.write(2,self.userid)
             row.write(3,encode(self.username))
@@ -145,8 +146,15 @@ class RecordClient():
             print "写入数据库完成！\n"
  
     def printViaPrinter(self):
-            print "正在打印\n"
-            print "打印完成请取票\n"
+        print "正在打印\n"
+        data = self.dataTag + "\t"\
+               + str(self.userid)+ "\t"\
+               + self.username + "\t"\
+               + self.shift + "\t"\
+               + str(self.thisBarcode)
+        #data = "打印"
+        print_in_paper(data)
+        print "打印完成请取票\n"
 
 
 def check_and_format_id(s):
@@ -160,10 +168,10 @@ def encode(str):
     return unicode(str,'cp936')
 
 def mainloop():
-    app = wx.PySimpleApp()    
+    app = wx.PySimpleApp()
+    this = RecordClient()
     while True :
         try:
-            this = RecordClient()
             UserId = this.getUserId()
             UserName = this.getUserName(UserId)
             is_name_confirmed = True
@@ -186,6 +194,8 @@ def mainloop():
             print msg
             if this.ask_input(msg) == "":
                 is_Parms_confirmed = True
+                
+            this.dataTag = str(time.time())
             this.updateDB()
             this.printViaPrinter()
             #        异常处理
