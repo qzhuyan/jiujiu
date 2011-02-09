@@ -42,23 +42,26 @@ class RecordClient():
         self.BarcodeTable = self.configData.get_parsed_worksheet('BarcodeTable')
         self.ErrorMessage = self.configData.get_GLCvalue("ErrorPrint").encode('cp936')
         self.ConfirmMessage = self.configData.get_GLCvalue("ConfirmMessage").encode('cp936')
+        self.QbgC_USRID = self.configData.get_GLCvalue('QbgC_USRID')
+        self.QbgC_BCODE = self.configData.get_GLCvalue('QbgC_BCODE')
+        self.QbgC_PARM = self.configData.get_GLCvalue('QbgC_PARM')
         pass
 
-    def gui_input(self,MSG,Title="UserInput"):
+    def gui_input(self,MSG,Title="UserInput",BgC="white"):
         if type(MSG) != u"aaa":
             MSG = unicode(MSG,'cp936')
-        dialog = FrontEnd(Title,MSG,Config = self.configData)
+        dialog = FrontEnd(Title,MSG,Config = self.configData,QbgC=BgC)
         return unicode(dialog.queryUser(MSG))
     
-    def ask_input(self,MSG,Title="UserInput"):
-        return self.gui_input(MSG,Title)
+    def ask_input(self,MSG,Title="UserInput",QbgC="white"):
+        return self.gui_input(MSG,Title,QbgC)
         #return raw_input(MSG).strip()
 
-    def ask_input_and_confirm(self,Query,Title="UserInput"):
+    def ask_input_and_confirm(self,Query,Title="UserInput",QbgC="white"):
         MSG = Query
         user_confirmed_value = ""
         while True:
-            thisInput = self.gui_input(MSG,Title)
+            thisInput = self.ask_input(MSG,Title,QbgC=QbgC)
             if thisInput == "" and user_confirmed_value != "":
                 return user_confirmed_value
             else:
@@ -67,7 +70,7 @@ class RecordClient():
 
     #Get username via userid
     def getUserId(self):
-        self.userid = self.ask_input_and_confirm(self.AskUserIdString)
+        self.userid = self.ask_input_and_confirm(self.AskUserIdString,QbgC=self.QbgC_USRID)
         return self.userid
 
     def getUserName(self,id):
@@ -91,7 +94,7 @@ class RecordClient():
         
     def scanbarcode(self):
         #Todo: add some timeout
-        self.MPbarcode = str(self.ask_input("Please Scan Barcode!\n\t"))
+        self.MPbarcode = str(self.ask_input("Please Scan Barcode!\n\t",QbgC=self.QbgC_BCODE))
         return self.MPbarcode
 
     def getMachineAndProduct(self):
@@ -106,7 +109,7 @@ class RecordClient():
         for parm in self.BarcodeTable[self.thisBarcode][5:]:
             if parm != "":
                 parm = parm.encode('cp936')
-                userinput = self.ask_input_and_confirm("«Î ‰»Î"+parm+":\n\t")
+                userinput = self.ask_input_and_confirm("«Î ‰»Î"+parm+":\n\t",QbgC=self.QbgC_PARM)
                 self.ParmDict[parm] = userinput
 
     def time_now(self):

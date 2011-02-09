@@ -25,19 +25,17 @@ class FrontEnd_Old():
         return Value
 
 class BigBox(wx.Dialog):
-    def __init__(self,Title,QueryMsg,DefaultValue="",Style=wx.OK|wx.CANCEL,Config=""):
+    def __init__(self,Title,QueryMsg,DefaultValue="",Style=wx.OK|wx.CANCEL,Config="",QbgC="white"):
         wx.Dialog.__init__(self, None, -1, Title, size=(250, 210))
         #Read Config
         if Config != "":
             #Colors
-            self.QbgC =  Config.get_GLCvalue('QbgC')
+            self.QbgC =  QbgC
             #Full Screen?
             if Config.get_GLCvalue('FullScreen') == u"yes":
                 self.Is_FullScreen = True
             else:
                 self.Is_FullScreen = False
-
-                
         self.Title = Title
         self.QueryMsg = QueryMsg
         self.DefaultValue = DefaultValue
