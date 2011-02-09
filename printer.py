@@ -6,7 +6,6 @@
 import win32ui
 import win32print
 import win32con
-
 import calendar as cd
 def print_in_paper(str1):
     # set monthly calendar so it will start with a Saturday
@@ -35,7 +34,7 @@ def print_in_paper(str1):
 if __name__ == '__main__':
     #str1 = u"ÄãºÃ"
     # put a year's monthly calendars into a string
-    #str1 = cd.calendar(2008)
-    str1 = "Hello William!\n"
+    str1 = cd.calendar(2008)
+    #str1 = "Hello William!\n"
     raw_input('make sure printer is ready then hit enter key ... ')
     print_in_paper()
