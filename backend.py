@@ -77,7 +77,6 @@ class RecordClient():
     #Get username via userid
     def getUserId(self):
         self.userid = self.ask_input(self.AskUserIdString,QbgC=self.QbgC_USRID)
-        print self.userid
         return self.userid
 
     def getUserName(self):
