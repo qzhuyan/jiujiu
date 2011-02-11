@@ -196,14 +196,14 @@ def mainloop():
             if this.ask_input(msg,AnsBoxSize=this.ConfirmBoxSize) == "":
                 msg = ""
             this.queryParms()
-            msg = "=====请确认以下信息,你这次输入的是=====\n"
+            msg = ""
             this.Time = this.time_now().split('.')[0]
-            msg = msg +  "日期: " + this.Time +"\n"
+            msg = msg #+ this.Time +" "
             Shift = this.calculateShift()
-            msg = msg +  "班次: " + Shift +"\n"
-            msg = msg +  "姓名: " + UserName +"\n"
-            msg = msg +  "机器号：" + Machine +"\n"
-            msg = msg + "产品：" + Product +"\n"
+            msg = msg + Shift +" " 
+            msg = msg +  " 姓名: " + UserName +"\n"
+            msg = msg +  "机器号：" + Machine
+            msg = msg + " 产品：" + Product +"\n"
             for each in this.ParmDict:
                 tmpV = this.ParmDict[each]
                 msg = msg + each +":"+str(tmpV)+"\n"

@@ -48,21 +48,21 @@ class BigBox(wx.Dialog):
     def queryUser(self,Msg,DefVal="",title="wakaka"):
         self.MainSizer = wx.BoxSizer(wx.VERTICAL)
         self.panelSizer = wx.BoxSizer(wx.VERTICAL)
-        
-
         font_Ans = wx.Font(90, wx.DECORATIVE,
                            wx.NORMAL,
                            wx.NORMAL)
-        font_Question = wx.Font(30, wx.DECORATIVE, 
+        if len(Msg) > 30:
+            Dsize = 20
+        else:
+            Dsize = 50
+        font_Question = wx.Font(Dsize, wx.DECORATIVE, 
                                 wx.NORMAL,
                                 wx.NORMAL)
-
         QuestionText = wx.StaticText(self, -1,Msg,size=(-1,300),style = wx.ALIGN_CENTER)
         QuestionText.SetForegroundColour('black') 
         QuestionText.SetBackgroundColour(self.QbgC)
         self.SetBackgroundColour(self.QbgC)
         QuestionText.SetFont(font_Question)
-        
         self.AnsBox = wx.TextCtrl(self, -1, "",
                                size = (600,400),
                                style = wx.TE_PROCESS_ENTER |wx.ALIGN_CENTER ^(wx.TE_PASSWORD) )
@@ -72,11 +72,9 @@ class BigBox(wx.Dialog):
         self.AnsBox.SetForegroundColour('white') 
         self.AnsBox.SetBackgroundColour('black')
         self.AnsBox.SetFont(font_Ans)
-        
         #self.button = wx.Button(self, wx.ID_OK, "OK",style=wx.ID_OK, pos=(50, 20)) 
         #self.Bind(wx.EVT_BUTTON, self.OnClick, self.button)
         #self.button.SetDefault()
-        
         self.panelSizer.Add(QuestionText,10, border =20, flag=wx.ALL|wx.ALIGN_CENTER)
         self.panelSizer.Add(self.AnsBox,self.AnsBoxSize, border = 60 ,flag=wx.ALL|wx.ALIGN_CENTER)
         #self.panelSizer.Add(self.button,1, flag=wx.EXPAND)
@@ -102,14 +100,12 @@ class FrontEnd(BigBox):
 class UnitTest():
     def __init__():
         pass
-    
     def test1():
         pass
 
 def beep(sound):
     winsound.PlaySound('%s.wav' % sound, winsound.SND_FILENAME)
-
-
+    
 if __name__ == '__main__':
     app = wx.PySimpleApp()
     thisconfig = JiuJiuConfig()
