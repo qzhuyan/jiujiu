@@ -25,7 +25,7 @@ class FrontEnd_Old():
         return Value
 
 class BigBox(wx.Dialog):
-    def __init__(self,Title,QueryMsg,DefaultValue="",Style=wx.OK|wx.CANCEL,Config="",QbgC="white"):
+    def __init__(self,Title,QueryMsg,DefaultValue="",Style=wx.OK|wx.CANCEL,Config="",QbgC="white",AnsBoxSize=10):
         wx.Dialog.__init__(self, None, -1, Title, size=(250, 210))
         #Read Config
         if Config != "":
@@ -40,6 +40,7 @@ class BigBox(wx.Dialog):
         self.QueryMsg = QueryMsg
         self.DefaultValue = DefaultValue
         self.Style = Style
+        self.AnsBoxSize = AnsBoxSize
         
     def showInfo2User(self,Msg):
         self.queryUser(Msg,DefVal="Error!Error!",title="send email to mscame@gmail.com ASAP")
@@ -77,7 +78,7 @@ class BigBox(wx.Dialog):
         #self.button.SetDefault()
         
         self.panelSizer.Add(QuestionText,10, border =20, flag=wx.ALL|wx.ALIGN_CENTER)
-        self.panelSizer.Add(self.AnsBox,10, border = 60 ,flag=wx.ALL|wx.ALIGN_CENTER)
+        self.panelSizer.Add(self.AnsBox,self.AnsBoxSize, border = 60 ,flag=wx.ALL|wx.ALIGN_CENTER)
         #self.panelSizer.Add(self.button,1, flag=wx.EXPAND)
         self.SetSizer(self.panelSizer)
         self.Fit()

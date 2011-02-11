@@ -41,24 +41,29 @@ class RecordClient():
         self.FileName = self.configData.get_GLCvalue("OutPutTable").encode('cp936')
         self.UserDict = self.configData.get_parsed_worksheet('EmploreeTable')
         self.BarcodeTable = self.configData.get_parsed_worksheet('BarcodeTable')
+        self.DisplayMsgTable = self.configData.get_parsed_worksheet('DisplayMsgTable')
         self.ErrorMessage = self.configData.get_GLCvalue("ErrorPrint").encode('cp936')
         self.ConfirmMessage = self.configData.get_GLCvalue("ConfirmMessage").encode('cp936')
         self.QbgC_USRID = self.configData.get_GLCvalue('QbgC_USRID')
         self.QbgC_BCODE = self.configData.get_GLCvalue('QbgC_BCODE')
         self.QbgC_PARM = self.configData.get_GLCvalue('QbgC_PARM')
+        self.ConfirmBoxSize = int(self.configData.get_GLCvalue('FinalConfirmBoxSize'))
         pass
 
-    def gui_input(self,MSG,Title="UserInput",BgC="white"):
+    def gui_input(self,MSG,Title="UserInput",BgC="white",AnsBoxSize=10):
         if type(MSG) != u"aaa":
             MSG = unicode(MSG,'cp936')
-        dialog = FrontEnd(Title,MSG,Config = self.configData,QbgC=BgC)
-        return unicode(dialog.queryUser(MSG))
+        dialog = FrontEnd(Title,MSG,Config = self.configData,QbgC=BgC,AnsBoxSize=AnsBoxSize)
+        UserReturn = dialog.queryUser(MSG)
+        if UserReturn == "+":
+            raise UserWantRestart(MSG)
+        return unicode(UserReturn)
     
-    def ask_input(self,MSG,Title="UserInput",QbgC="white"):
-        return self.gui_input(MSG,Title,QbgC)
+    def ask_input(self,MSG,Title="UserInput",QbgC="white",AnsBoxSize=10):
+        return self.gui_input(MSG,Title,QbgC,AnsBoxSize=AnsBoxSize)
         #return raw_input(MSG).strip()
 
-    def ask_input_and_confirm(self,Query,Title="UserInput",QbgC="white"):
+    def ask_input_and_confirm(self,Query,Title="UserInput",QbgC="white",AnsBoxSize=10):
         MSG = Query
         user_confirmed_value = ""
         while True:
@@ -71,7 +76,7 @@ class RecordClient():
 
     #Get username via userid
     def getUserId(self):
-        self.userid = self.ask_input_and_confirm(self.AskUserIdString,QbgC=self.QbgC_USRID)
+        self.userid = self.ask_input(self.AskUserIdString,QbgC=self.QbgC_USRID)
         return self.userid
 
     def getUserName(self,id):
@@ -95,11 +100,15 @@ class RecordClient():
         
     def scanbarcode(self):
         #Todo: add some timeout
-        self.MPbarcode = str(self.ask_input("Please Scan Barcode!\n\t",QbgC=self.QbgC_BCODE))
+        self.MPbarcode = str(self.ask_input(self.username+"请插入条码卡",QbgC=self.QbgC_BCODE))
         return self.MPbarcode
 
     def getMachineAndProduct(self):
-        self.thisBarcode = check_and_format_id(self.scanbarcode())
+        is_barcode_correct = False
+        while not is_barcode_correct:
+            self.thisBarcode = check_and_format_id(self.scanbarcode())
+            if self.BarcodeTable.has_key(self.thisBarcode):
+                is_barcode_correct = True
         self.Product = self.BarcodeTable[self.thisBarcode][4].encode('cp936')
         self.Machine = self.BarcodeTable[self.thisBarcode][2].encode('cp936')
         return self.Machine, self.Product
@@ -110,7 +119,7 @@ class RecordClient():
         for parm in self.BarcodeTable[self.thisBarcode][5:]:
             if parm != "":
                 parm = parm.encode('cp936')
-                userinput = self.ask_input_and_confirm("请输入"+parm+":\n\t",QbgC=self.QbgC_PARM)
+                userinput = self.ask_input("请输入"+parm+":\n\t",QbgC=self.QbgC_PARM)
                 self.ParmDict[parm] = userinput
 
     def time_now(self):
@@ -156,7 +165,6 @@ class RecordClient():
         print_in_paper(data)
         print "打印完成请取票\n"
 
-
 def check_and_format_id(s):
     try: 
         float(s)
@@ -172,33 +180,44 @@ def mainloop():
     this = RecordClient()
     while True :
         try:
-            UserId = this.getUserId()
+            is_name_corrected = False
+            while not is_name_corrected:
+                UserId = this.getUserId()
+                if this.UserDict.has_key(UserId):
+                    is_name_corrected = True                    
             UserName = this.getUserName(UserId)
-            is_name_confirmed = True
-            is_name_confirmed = False
             Machine, Product = this.getMachineAndProduct()
-            msg =  "=====请确认以下信息====="
-            msg = msg+ "姓名: " + UserName+"\n"
+            msg =  ""
             msg = msg +  "机器号：" + Machine +"\n"
             msg = msg + "产品：" + Product +"\n"
-            Shift = this.calculateShift()
-            msg = msg +  "班次: " + Shift +"\n"
-            msg = msg + "" + UserName+"\n"
-            if this.ask_input(msg) == "":
+#            Shift = this.calculateShift()
+#           msg = msg +  "班次: " + Shift +"\n"
+#            msg = msg + "" + UserName+"\n"
+            if this.ask_input(msg,AnsBoxSize=this.ConfirmBoxSize) == "":
                 msg = ""
             this.queryParms()
             msg = "=====请确认以下信息,你这次输入的是=====\n"
+            Shift = this.calculateShift()
+            msg = msg +  "班次: " + Shift +"\n"
+            msg = msg +  "姓名: " + UserName +"\n"
+            msg = msg +  "机器号：" + Machine +"\n"
+            msg = msg + "产品：" + Product +"\n"
             for each in this.ParmDict:
                 tmpV = this.ParmDict[each]
                 msg = msg + each +":"+str(tmpV)+"\n"
             print msg
-            if this.ask_input(msg) == "":
+            if this.ask_input(msg,AnsBoxSize=this.ConfirmBoxSize) == "":
                 is_Parms_confirmed = True
-                
             this.dataTag = str(time.time())
             this.updateDB()
+            this.ask_input("请取打印单",AnsBoxSize=this.ConfirmBoxSize)
             this.printViaPrinter()
+            time.sleep(5)
+            
             #        异常处理
+        except UserWantRestart as UserRestart:
+            print "User ask restart!"
+            continue
         except Exception as excep1:
             exceptionTraceback = sys.exc_info()
             print "Error found ! please mailto:mscame@gmail.com"
@@ -207,6 +226,12 @@ def mainloop():
             dialog = FrontEnd("","",Config = this.configData)
             dialog.showInfo2User(this.ErrorMessage)
 
+class UserWantRestart(Exception):
+    def __init__(self,value):
+        self.value = value
+    def __str__(self):
+        return self.value
+    
         
 if __name__ == '__main__':
     while True:
