@@ -77,12 +77,17 @@ class RecordClient():
     #Get username via userid
     def getUserId(self):
         self.userid = self.ask_input(self.AskUserIdString,QbgC=self.QbgC_USRID)
+        print self.userid
         return self.userid
 
-    def getUserName(self,id):
-        #ToDo: exception
-        id = check_and_format_id(id)
-        self.username = self.UserDict[id][1].encode('cp936')
+    def getUserName(self):
+        is_name_corrected = False
+        while not is_name_corrected:
+            tmpId = self.getUserId()
+            tmpId = check_and_format_id(tmpId)
+            if self.UserDict.has_key(tmpId):
+                is_name_corrected = True                    
+        self.username = self.UserDict[tmpId][1].encode('cp936')
         return self.username 
 
     def calculateShift(self):
@@ -100,7 +105,7 @@ class RecordClient():
         
     def scanbarcode(self):
         #Todo: add some timeout
-        self.MPbarcode = str(self.ask_input(self.username+"请插入条码卡",QbgC=self.QbgC_BCODE))
+        self.MPbarcode = str(self.ask_input(self.username+"\n"+"请插入条码卡",QbgC=self.QbgC_BCODE))
         return self.MPbarcode
 
     def getMachineAndProduct(self):
@@ -132,7 +137,7 @@ class RecordClient():
             wb = copy(rb)
             row = wb.get_sheet(self.OutFileSheetNumber).row(rb.sheets()[self.OutFileSheetNumber].nrows)
             row.write(0,self.dataTag)
-            row.write(1,encode(self.time_now().split('.')[0]))
+            row.write(1,encode(self.Time))
             row.write(2,self.userid)
             row.write(3,encode(self.username))
             row.write(4,encode(self.Product))
@@ -154,13 +159,14 @@ class RecordClient():
             wb.save(self.FileName)
             print "写入数据库完成！\n"
  
-    def printViaPrinter(self):
+    def printViaPrinter(self,data=""):
         print "正在打印\n"
-        data = self.dataTag + "\t"\
-               + str(self.userid)+ "\t"\
-               + self.username + "\t"\
-               + self.shift + "\t"\
-               + str(self.thisBarcode)
+        if data == "":
+            data = self.dataTag + "\t"\
+                   + str(self.userid)+ "\t"\
+                   + self.username + "\t"\
+                   + self.shift + "\t"\
+                   + str(self.thisBarcode)
         #data = "打印"
         print_in_paper(data)
         print "打印完成请取票\n"
@@ -180,12 +186,7 @@ def mainloop():
     this = RecordClient()
     while True :
         try:
-            is_name_corrected = False
-            while not is_name_corrected:
-                UserId = this.getUserId()
-                if this.UserDict.has_key(UserId):
-                    is_name_corrected = True                    
-            UserName = this.getUserName(UserId)
+            UserName = this.getUserName()
             Machine, Product = this.getMachineAndProduct()
             msg =  ""
             msg = msg +  "机器号：" + Machine +"\n"
@@ -197,6 +198,8 @@ def mainloop():
                 msg = ""
             this.queryParms()
             msg = "=====请确认以下信息,你这次输入的是=====\n"
+            this.Time = this.time_now().split('.')[0]
+            msg = msg +  "日期: " + this.Time +"\n"
             Shift = this.calculateShift()
             msg = msg +  "班次: " + Shift +"\n"
             msg = msg +  "姓名: " + UserName +"\n"
@@ -211,9 +214,7 @@ def mainloop():
             this.dataTag = str(time.time())
             this.updateDB()
             this.ask_input("请取打印单",AnsBoxSize=this.ConfirmBoxSize)
-            this.printViaPrinter()
-            time.sleep(5)
-            
+            this.printViaPrinter(msg)
             #        异常处理
         except UserWantRestart as UserRestart:
             print "User ask restart!"
