@@ -86,7 +86,7 @@ class BigBox(wx.Dialog):
         if self.ShowModal() == wx.ID_OK: 
             Value = self.AnsBox.GetValue()
         self.Destroy()
-        return Value
+        return str(Value)
         
     def OnClick(self, event):
         print "OK pushed"

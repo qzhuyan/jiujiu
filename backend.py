@@ -95,13 +95,17 @@ class RecordClient():
         #这里定义如何计算班次
         #每天3班，8：00-16：00，16：00-24：00，24：00-8：00
         hour = datetime.datetime.now().hour
-        if hour in range(9,17): #      9 <= hour <17
+        if hour in range(15,17): #      9 <= hour <17
             self.shift = self.ShiftDict['Morning']
-        if hour in range(17,24):#      17 <= hour <24
+        if hour in range(0,1):#      17 <= hour <24
             self.shift =  self.ShiftDict['Middle']
-        if hour in range(0,9):  #      0 <= hour <8
-            self.shift =  self.ShiftDict['Night']
-
+        if hour == 23:
+            self.shift =  self.ShiftDict['Middle']
+        if hour in range(7,9):  #      0 <= hour <8
+            spelf.shift =  self.ShiftDict['Night']
+        else:
+            self.shift = ""
+            
         return self.shift
         
     def scanbarcode(self):
@@ -115,6 +119,9 @@ class RecordClient():
             self.thisBarcode = check_and_format_id(self.scanbarcode())
             if self.BarcodeTable.has_key(self.thisBarcode):
                 is_barcode_correct = True
+            else:
+                print self.thisBarcode
+                print self.BarcodeTable
         self.Product = self.BarcodeTable[self.thisBarcode][4].encode('cp936')
         self.Machine = self.BarcodeTable[self.thisBarcode][2].encode('cp936')
         return self.Machine, self.Product
@@ -214,8 +221,8 @@ def mainloop():
                 is_Parms_confirmed = True
             this.dataTag = str(time.time())
             this.updateDB()
-            this.ask_input("请取打印单",AnsBoxSize=this.ConfirmBoxSize)
             this.printViaPrinter(msg)
+            this.ask_input("请取打印单",AnsBoxSize=this.ConfirmBoxSize)
             #        异常处理
         except UserWantRestart as UserRestart:
             print "User ask restart!"
@@ -227,7 +234,6 @@ def mainloop():
             #TODO: show fault to user!
             dialog = FrontEnd("","",Config = this.configData)
             dialog.showInfo2User(this.ErrorMessage)
-
         
 if __name__ == '__main__':
     while True:
