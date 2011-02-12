@@ -9,8 +9,10 @@ import sys, traceback
 from frontEnd import FrontEnd
 from config import JiuJiuConfig
 from printer import print_in_paper
+from JiuJiuException import UserWantRestart
 import wx
 import time
+
 
 class RecordClient():
     AskUserIdString = "\n«Î ‰»Î‘±π§∫≈:\n"
@@ -226,12 +228,6 @@ def mainloop():
             dialog = FrontEnd("","",Config = this.configData)
             dialog.showInfo2User(this.ErrorMessage)
 
-class UserWantRestart(Exception):
-    def __init__(self,value):
-        self.value = value
-    def __str__(self):
-        return self.value
-    
         
 if __name__ == '__main__':
     while True:

@@ -68,10 +68,12 @@ class BigBox(wx.Dialog):
                                style = wx.TE_PROCESS_ENTER |wx.ALIGN_CENTER ^(wx.TE_PASSWORD) )
 
         self.Bind(wx.EVT_TEXT_ENTER, self.OnEnterPushed, self.AnsBox)
-        
+                
         self.AnsBox.SetForegroundColour('white') 
         self.AnsBox.SetBackgroundColour('black')
         self.AnsBox.SetFont(font_Ans)
+        self.AnsBox.Bind(wx.wx.EVT_KEY_DOWN, self.OnKeyDown)
+
         #self.button = wx.Button(self, wx.ID_OK, "OK",style=wx.ID_OK, pos=(50, 20)) 
         #self.Bind(wx.EVT_BUTTON, self.OnClick, self.button)
         #self.button.SetDefault()
@@ -93,7 +95,14 @@ class BigBox(wx.Dialog):
         beep('beep')
         self.EndModal(wx.ID_OK)
         pass
-    
+
+    def OnKeyDown(self, keyevent):
+        keyPushed = keyevent.GetKeyCode()
+        keyevent.Skip()
+        if wx.WXK_NUMPAD_ADD== keyPushed:
+            beep('plus')
+            self.EndModal(wx.ID_OK)
+
 class FrontEnd(BigBox):
     pass
 
