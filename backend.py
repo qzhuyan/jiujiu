@@ -102,7 +102,7 @@ class RecordClient():
         if hour == 23:
             self.shift =  self.ShiftDict['Middle']
         if hour in range(7,9):  #      0 <= hour <8
-            spelf.shift =  self.ShiftDict['Night']
+            self.shift =  self.ShiftDict['Night']
         else:
             self.shift = ""
             
@@ -170,11 +170,16 @@ class RecordClient():
     def printViaPrinter(self,data=""):
         print "正在打印\n"
         if data == "":
-            data = self.dataTag + "\t"\
-                   + str(self.userid)+ "\t"\
-                   + self.username + "\t"\
-                   + self.shift + "\t"\
+            data = self.dataTag + "\n"\
+                   + self.username + "\n"\
+                   + self.shift + "\n"\
+                   + self.Product + "\n"\
+                   + self.Machine + "\n"\
                    + str(self.thisBarcode)
+            for each in self.ParmDict:
+                tmpV = self.ParmDict[each]
+                data = data + each +":"+str(tmpV)+"\n"
+
         #data = "打印"
         print_in_paper(data)
         print "打印完成请取票\n"
@@ -211,8 +216,8 @@ def mainloop():
             Shift = this.calculateShift()
             msg = msg + Shift +" " 
             msg = msg +  " 姓名: " + UserName +"\n"
-            msg = msg +  "机器号：" + Machine
-            msg = msg + " 产品：" + Product +"\n"
+            msg = msg +  " 机器号：" + Machine
+            msg = msg + "  产品：" + Product +"\n"
             for each in this.ParmDict:
                 tmpV = this.ParmDict[each]
                 msg = msg + each +":"+str(tmpV)+"\n"
@@ -221,12 +226,13 @@ def mainloop():
                 is_Parms_confirmed = True
             this.dataTag = str(time.time())
             this.updateDB()
-            this.printViaPrinter(msg)
+            this.printViaPrinter()
             this.ask_input("请取打印单",AnsBoxSize=this.ConfirmBoxSize)
             #        异常处理
         except UserWantRestart as UserRestart:
             print "User ask restart!"
             continue
+        
         except Exception as excep1:
             exceptionTraceback = sys.exc_info()
             print "Error found ! please mailto:mscame@gmail.com"

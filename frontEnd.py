@@ -52,7 +52,7 @@ class BigBox(wx.Dialog):
                            wx.NORMAL,
                            wx.NORMAL)
         if len(Msg) > 30:
-            Dsize = 20
+            Dsize = 30
         else:
             Dsize = 50
         font_Question = wx.Font(Dsize, wx.DECORATIVE, 
