@@ -93,19 +93,17 @@ class RecordClient():
 
     def calculateShift(self):
         #这里定义如何计算班次
-        #每天3班，8：00-16：00，16：00-24：00，24：00-8：00
         hour = datetime.datetime.now().hour
-        if hour in range(15,17): #      9 <= hour <17
+        if hour in range(15,17):
             self.shift = self.ShiftDict['Morning']
-        if hour in range(0,1):#      17 <= hour <24
+        if hour in range(0,1):
             self.shift =  self.ShiftDict['Middle']
         if hour == 23:
             self.shift =  self.ShiftDict['Middle']
-        if hour in range(7,9):  #      0 <= hour <8
+        if hour in range(7,9):
             self.shift =  self.ShiftDict['Night']
         else:
             self.shift = ""
-            
         return self.shift
         
     def scanbarcode(self):
@@ -115,13 +113,15 @@ class RecordClient():
 
     def getMachineAndProduct(self):
         is_barcode_correct = False
+        self.thisBarcode = self.scanbarcode()
         while not is_barcode_correct:
-            self.thisBarcode = check_and_format_id(self.scanbarcode())
             if self.BarcodeTable.has_key(self.thisBarcode):
                 is_barcode_correct = True
             else:
-                print self.thisBarcode
-                print self.BarcodeTable
+                self.thisBarcode = check_and_format_id(self.thisBarcode)
+                if self.BarcodeTable.has_key(self.thisBarcode):
+                    is_barcode_correct = True
+
         self.Product = self.BarcodeTable[self.thisBarcode][4].encode('cp936')
         self.Machine = self.BarcodeTable[self.thisBarcode][2].encode('cp936')
         return self.Machine, self.Product
@@ -225,6 +225,9 @@ def mainloop():
             if this.ask_input(msg,AnsBoxSize=this.ConfirmBoxSize) == "":
                 is_Parms_confirmed = True
             this.dataTag = str(time.time())
+            tmpTime = datetime.datetime.now()
+            this.dataIndex = str(tmpTime.month)+str(tmpTime.day)+str(tmpTime.hour)+str(tmpTime.minute)+str(tmpTime.second)
+            this.dataTag = this.dataIndex
             this.updateDB()
             this.printViaPrinter()
             this.ask_input("请取打印单",AnsBoxSize=this.ConfirmBoxSize)
