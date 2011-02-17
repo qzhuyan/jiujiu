@@ -36,4 +36,4 @@ class ErrorReporter:
 
 if __name__ == '__main__':
     this = ErrorReporter("")
-    this.mail('mscame@gmail.com',"JiuJiu error Report","hi","")
+    this.mail('mscame@gmail.com',"JiuJiu error Report","hi")

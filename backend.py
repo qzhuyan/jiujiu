@@ -180,6 +180,8 @@ class RecordClient():
             for each in self.ParmDict:
                 tmpV = self.ParmDict[each]
                 data = data + each +":"+str(tmpV)+"\n"
+            #Redundancy print data index
+            data = data + self.dataTag
 
         #data = "打印"
         print_in_paper(data)
@@ -232,7 +234,7 @@ def mainloop():
             this.updateDB()
             this.printViaPrinter()
             this.ask_input("请取打印单",AnsBoxSize=this.ConfirmBoxSize)
-            #        异常处理
+            #异常处理
         except UserWantRestart as UserRestart:
             print "User ask restart!"
             continue
@@ -245,10 +247,12 @@ def mainloop():
             dialog = FrontEnd("","",Config = this.configData)
             dialog.showInfo2User(this.ErrorMessage)
             try:
-                Reporter = ErrorReporter(this.Configdata)
+                Reporter = ErrorReporter(this.configData)
                 Reporter.mail('mscame@gmail.com',"JiuJiu error Report"+this.dataIndex,"hi","")
             except Exception as ExcepReporter:
-                pass
+                exceptionTraceback = sys.exc_info()
+                traceback.print_exc(file=sys.stdout)
+                
 if __name__ == '__main__':
     while True:
         mainloop()
