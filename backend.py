@@ -10,6 +10,7 @@ from frontEnd import FrontEnd
 from config import JiuJiuConfig
 from printer import print_in_paper
 from JiuJiuException import UserWantRestart
+from JiuJiuFeedback import ErrorReporter
 import wx
 import time
 
@@ -243,7 +244,11 @@ def mainloop():
             #TODO: show fault to user!
             dialog = FrontEnd("","",Config = this.configData)
             dialog.showInfo2User(this.ErrorMessage)
-        
+            try:
+                Reporter = ErrorReporter(this.Configdata)
+                Reporter.mail('mscame@gmail.com',"JiuJiu error Report"+this.dataIndex,"hi","")
+            except Exception as ExcepReporter:
+                pass
 if __name__ == '__main__':
     while True:
         mainloop()
