@@ -19,8 +19,8 @@ def print_in_paper(str1):
         hDC.SetMapMode(win32con.MM_TWIPS)
 
         # draws text within a box (assume about 1400 dots per inch for typical HP printer)
-        ulc_x = 2000    # give a left margin
-        ulc_y = -2000   # give a top margin
+        ulc_x = 20    # give a left margin
+        ulc_y = -20   # give a top margin
         lrc_x = 21500   # width of text area-margin, close to right edge of page
         lrc_y = -25000  # height of text area-margin, close to bottom of the page
         hDC.DrawText(str1, (ulc_x, ulc_y, lrc_x, lrc_y), win32con.DT_LEFT)
@@ -37,4 +37,4 @@ if __name__ == '__main__':
     str1 = cd.calendar(2008)
     #str1 = "Hello William!\n"
     raw_input('make sure printer is ready then hit enter key ... ')
-    print_in_paper()
+    print_in_paper("XXXXXXXXXXXXXXXXXXXXXXXXXX")
