@@ -14,6 +14,7 @@ from JiuJiuFeedback import ErrorReporter
 import wx
 import time
 
+Ver = "r1a02"
 
 class RecordClient():
     AskUserIdString = "\n«Î ‰»Î‘±π§∫≈:\n"
@@ -114,8 +115,8 @@ class RecordClient():
 
     def getMachineAndProduct(self):
         is_barcode_correct = False
-        self.thisBarcode = self.scanbarcode()
         while not is_barcode_correct:
+            self.thisBarcode = self.scanbarcode()
             if self.BarcodeTable.has_key(self.thisBarcode):
                 is_barcode_correct = True
             else:
@@ -241,17 +242,21 @@ def mainloop():
         
         except Exception as excep1:
             exceptionTraceback = sys.exc_info()
-            print "Error found ! please mailto:mscame@gmail.com"
             traceback.print_exc(file=sys.stdout)
-            #TODO: show fault to user!
-            dialog = FrontEnd("","",Config = this.configData)
-            dialog.showInfo2User(this.ErrorMessage)
+            #Send Error Report to user
             try:
-                Reporter = ErrorReporter(this.configData)
-                Reporter.mail('mscame@gmail.com',"JiuJiu error Report"+this.dataIndex,"hi","")
+                print "Error found !  mailto:mscame@gmail.com"
+                CrashReport = "CrashReport:\t" + traceback.format_exc()
+                Reporter = ErrorReporter('mscame@gmail.com',"JiuJiu Error Report:\t"+Ver,CrashReport,"")
+                Reporter.sendmail()
             except Exception as ExcepReporter:
                 exceptionTraceback = sys.exc_info()
                 traceback.print_exc(file=sys.stdout)
+            #TODO: show fault to user!
+            dialog = FrontEnd("","",Config = this.configData)
+            dialog.showInfo2User(this.ErrorMessage)
+            continue
+
                 
 if __name__ == '__main__':
     while True:
