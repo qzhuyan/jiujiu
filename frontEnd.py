@@ -52,13 +52,14 @@ class BigBox(wx.Dialog):
                            wx.NORMAL,
                            wx.NORMAL)
         if len(Msg) > 30:
-            Dsize = 30
+            Dsize = 39
         else:
             Dsize = 50
+            
         font_Question = wx.Font(Dsize, wx.DECORATIVE, 
                                 wx.NORMAL,
                                 wx.NORMAL)
-        QuestionText = wx.StaticText(self, -1,Msg,size=(-1,300),style = wx.ALIGN_CENTER)
+        QuestionText = wx.StaticText(self, -1,Msg,size=(-1,300),style = wx.ALIGN_LEFT)
         QuestionText.SetForegroundColour('black') 
         QuestionText.SetBackgroundColour(self.QbgC)
         self.SetBackgroundColour(self.QbgC)
@@ -77,7 +78,7 @@ class BigBox(wx.Dialog):
         #self.button = wx.Button(self, wx.ID_OK, "OK",style=wx.ID_OK, pos=(50, 20)) 
         #self.Bind(wx.EVT_BUTTON, self.OnClick, self.button)
         #self.button.SetDefault()
-        self.panelSizer.Add(QuestionText,10, border =20, flag=wx.ALL|wx.ALIGN_CENTER)
+        self.panelSizer.Add(QuestionText,10, border =20, flag=wx.ALL|wx.ALIGN_LEFT)
         self.panelSizer.Add(self.AnsBox,self.AnsBoxSize, border = 60 ,flag=wx.ALL|wx.ALIGN_CENTER)
         #self.panelSizer.Add(self.button,1, flag=wx.EXPAND)
         self.SetSizer(self.panelSizer)
@@ -119,5 +120,5 @@ if __name__ == '__main__':
     app = wx.PySimpleApp()
     thisconfig = JiuJiuConfig()
     frontIns = FrontEnd("who are you?","yourName?",Config=thisconfig)
-    frontIns.queryUser("Hello, man!")
+    frontIns.queryUser("Hello, man!\nNextLine\nNextLine")
 

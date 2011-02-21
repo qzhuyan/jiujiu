@@ -173,14 +173,16 @@ class RecordClient():
         print "正在打印\n"
         if data == "":
             data = self.dataTag + "\n"\
+                   + "\n" \
                    + self.username + "\n"\
                    + self.shift + "\n"\
                    + self.Product + "\n"\
-                   + self.Machine + "\n"\
-                   + str(self.thisBarcode)
-            for each in self.ParmDict:
-                tmpV = self.ParmDict[each]
-                data = data + each +":"+str(tmpV)+"\n"
+                   + self.Machine + "\n"
+            for each in self.BarcodeTable[self.thisBarcode][5:]:
+                if each != "":
+                    each = each.encode("cp936")
+                    tmpV = self.ParmDict[each]
+                    data = data + each +":"+str(tmpV)+"\n"
             #Redundancy print data index
             data = data + self.dataTag
 
@@ -206,7 +208,7 @@ def mainloop():
             UserName = this.getUserName()
             Machine, Product = this.getMachineAndProduct()
             msg =  ""
-            msg = msg +  "机器号：" + Machine +"\n"
+            msg = msg +  "工序：" + Machine +"\n"
             msg = msg + "产品：" + Product +"\n"
 #            Shift = this.calculateShift()
 #           msg = msg +  "班次: " + Shift +"\n"
@@ -218,13 +220,14 @@ def mainloop():
             this.Time = this.time_now().split('.')[0]
             msg = msg #+ this.Time +" "
             Shift = this.calculateShift()
-            msg = msg + Shift +" " 
-            msg = msg +  " 姓名: " + UserName +"\n"
-            msg = msg +  " 机器号：" + Machine
+            msg = msg +  "姓名: " + UserName +"\n"
+            msg = msg +  "工序：" + Machine
             msg = msg + "  产品：" + Product +"\n"
-            for each in this.ParmDict:
-                tmpV = this.ParmDict[each]
-                msg = msg + each +":"+str(tmpV)+"\n"
+            for each in this.BarcodeTable[this.thisBarcode][5:]:
+                if each != "" :
+                    each = each.encode('cp936')
+                    tmpV = this.ParmDict[each]
+                    msg = msg + each +":"+str(tmpV)+"\n"
             print msg
             if this.ask_input(msg,AnsBoxSize=this.ConfirmBoxSize) == "":
                 is_Parms_confirmed = True

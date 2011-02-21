@@ -24,7 +24,6 @@ def print_in_paper(str1):
         lrc_x = 21500   # width of text area-margin, close to right edge of page
         lrc_y = -25000  # height of text area-margin, close to bottom of the page
         hDC.DrawText(str1, (ulc_x, ulc_y, lrc_x, lrc_y), win32con.DT_LEFT)
-
         hDC.EndPage()
         hDC.EndDoc()
     except:
