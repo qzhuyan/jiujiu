@@ -14,7 +14,7 @@ from JiuJiuFeedback import ErrorReporter
 import wx
 import time
 
-Ver = "r1a02"
+Ver = "r1a03"
 
 class RecordClient():
     AskUserIdString = "\n«Î ‰»Î‘±π§∫≈:\n"
@@ -175,6 +175,7 @@ class RecordClient():
             data = self.dataTag + "\n"\
                    + "\n" \
                    + self.username + "\n"\
+                   + self.Time + "\n" \
                    + self.shift + "\n"\
                    + self.Product + "\n"\
                    + self.Machine + "\n"
