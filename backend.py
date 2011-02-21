@@ -123,7 +123,6 @@ class RecordClient():
                 self.thisBarcode = check_and_format_id(self.thisBarcode)
                 if self.BarcodeTable.has_key(self.thisBarcode):
                     is_barcode_correct = True
-
         self.Product = self.BarcodeTable[self.thisBarcode][4].encode('cp936')
         self.Machine = self.BarcodeTable[self.thisBarcode][2].encode('cp936')
         return self.Machine, self.Product
@@ -153,7 +152,6 @@ class RecordClient():
             row.write(4,encode(self.Product))
             row.write(5,encode(self.Machine))
             row.write(6,encode(self.shift))
-            
             for parm in self.ParmDict:
                 for col in range(sheet.ncols):
                     cellValue = sheet.cell(self.OutFileKeyRowNumber,col).value
@@ -172,7 +170,7 @@ class RecordClient():
     def printViaPrinter(self,data=""):
         print "ÕýÔÚ´òÓ¡\n"
         if data == "":
-            data = self.dataTag + "\n"\
+            data = self.Time + "\n"\
                    + "\n" \
                    + self.username + "\n"\
                    + self.Time + "\n" \

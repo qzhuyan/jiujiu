@@ -52,7 +52,7 @@ class BigBox(wx.Dialog):
                            wx.NORMAL,
                            wx.NORMAL)
         if len(Msg) > 30:
-            Dsize = 39
+            Dsize = 45
         else:
             Dsize = 50
             
@@ -78,7 +78,7 @@ class BigBox(wx.Dialog):
         #self.button = wx.Button(self, wx.ID_OK, "OK",style=wx.ID_OK, pos=(50, 20)) 
         #self.Bind(wx.EVT_BUTTON, self.OnClick, self.button)
         #self.button.SetDefault()
-        self.panelSizer.Add(QuestionText,10, border =20, flag=wx.ALL|wx.ALIGN_LEFT)
+        self.panelSizer.Add(QuestionText,10, border = 256, flag=wx.LEFT|wx.ALIGN_LEFT)
         self.panelSizer.Add(self.AnsBox,self.AnsBoxSize, border = 60 ,flag=wx.ALL|wx.ALIGN_CENTER)
         #self.panelSizer.Add(self.button,1, flag=wx.EXPAND)
         self.SetSizer(self.panelSizer)
