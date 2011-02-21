@@ -170,7 +170,7 @@ class RecordClient():
     def printViaPrinter(self,data=""):
         print "ÕıÔÚ´òÓ¡\n"
         if data == "":
-            data = self.Time + "\n"\
+            data = self.dataTag + "\n"\
                    + "\n" \
                    + self.username + "\n"\
                    + self.Time + "\n" \
