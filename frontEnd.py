@@ -51,11 +51,12 @@ class BigBox(wx.Dialog):
         font_Ans = wx.Font(90, wx.DECORATIVE,
                            wx.NORMAL,
                            wx.NORMAL)
-        if len(Msg) > 30:
+        lines = Msg.count('\n')
+        if  lines > 5:
             Dsize = 45
         else:
-            Dsize = 50
-            
+            Dsize = 50 
+        
         font_Question = wx.Font(Dsize, wx.DECORATIVE, 
                                 wx.NORMAL,
                                 wx.NORMAL)
@@ -65,7 +66,7 @@ class BigBox(wx.Dialog):
         self.SetBackgroundColour(self.QbgC)
         QuestionText.SetFont(font_Question)
         self.AnsBox = wx.TextCtrl(self, -1, "",
-                               size = (600,400),
+                               size = (700,400),
                                style = wx.TE_PROCESS_ENTER |wx.ALIGN_CENTER ^(wx.TE_PASSWORD) )
 
         self.Bind(wx.EVT_TEXT_ENTER, self.OnEnterPushed, self.AnsBox)
@@ -119,6 +120,8 @@ def beep(sound):
 if __name__ == '__main__':
     app = wx.PySimpleApp()
     thisconfig = JiuJiuConfig()
-    frontIns = FrontEnd("who are you?","yourName?",Config=thisconfig)
-    frontIns.queryUser("Hello, man!\nNextLine\nNextLine")
+    # frontIns = FrontEnd("who are you?","yourName?",Config=thisconfig,AnsBoxSize=1)
+    # frontIns.queryUser("Hello, man!\nNextLine\nNextLine\n435345\n435345\nDDDD\n")
+    frontIns = FrontEnd("who are you?","yourName?",Config=thisconfig,AnsBoxSize=1)
+    frontIns.queryUser("Hello, man!\nNextLine\nNextLineDDDD\n")
 

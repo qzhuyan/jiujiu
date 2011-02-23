@@ -17,7 +17,7 @@ import time
 Ver = "r1a03"
 
 class RecordClient():
-    AskUserIdString = "\n请输入员工号:\n"
+    AskUserIdString = "\n\n  请输入员工号:\n"
     
     #这里定义员工号和员工姓名 a1是员工号，周星驰是员工姓名, 配置文件已支持
     UserDict = dict(a1="周星驰",a2="梁朝伟",a3="猪八戒",a4="孙悟空")
@@ -110,7 +110,7 @@ class RecordClient():
         
     def scanbarcode(self):
         #Todo: add some timeout
-        self.MPbarcode = str(self.ask_input(self.username+"\n"+"请插入条码卡",QbgC=self.QbgC_BCODE))
+        self.MPbarcode = str(self.ask_input("\n"+self.username+"\n"+"请插入条码卡",QbgC=self.QbgC_BCODE))
         return self.MPbarcode
 
     def getMachineAndProduct(self):
@@ -133,7 +133,7 @@ class RecordClient():
         for parm in self.BarcodeTable[self.thisBarcode][5:]:
             if parm != "":
                 parm = parm.encode('cp936')
-                userinput = self.ask_input("请输入"+parm+":\n\t",QbgC=self.QbgC_PARM)
+                userinput = self.ask_input("\n\n"+"请输入   "+parm+":\n\t",QbgC=self.QbgC_PARM)
                 self.ParmDict[parm] = userinput
 
     def time_now(self):
@@ -170,20 +170,19 @@ class RecordClient():
     def printViaPrinter(self,data=""):
         print "正在打印\n"
         if data == "":
-            data = self.dataTag + "\n"\
+            data = "编号：" + self.dataTag + "\n"\
                    + "\n" \
-                   + self.username + "\n"\
-                   + self.Time + "\n" \
-                   + self.shift + "\n"\
-                   + self.Product + "\n"\
-                   + self.Machine + "\n"
+                   + self.Time +"\n"\
+                   + "\n" \
+                   + "姓名：" + self.username + "\n"\
+                   + "班次：" + self.shift + "\n"\
+                   + "产品：" + self.Product + "\n"\
+                   + "工序： " + self.Machine + "\n\n"
             for each in self.BarcodeTable[self.thisBarcode][5:]:
                 if each != "":
                     each = each.encode("cp936")
                     tmpV = self.ParmDict[each]
-                    data = data + each +":"+str(tmpV)+"\n"
-            #Redundancy print data index
-            data = data + self.dataTag
+                    data = data + each +": "+str(tmpV)+"\n"
 
         #data = "打印"
         print_in_paper(data)
@@ -206,12 +205,9 @@ def mainloop():
         try:
             UserName = this.getUserName()
             Machine, Product = this.getMachineAndProduct()
-            msg =  ""
-            msg = msg +  "工序：" + Machine +"\n"
+            msg =  "\n\n"
+            msg = msg + "工序：" + Machine +"\n"
             msg = msg + "产品：" + Product +"\n"
-#            Shift = this.calculateShift()
-#           msg = msg +  "班次: " + Shift +"\n"
-#            msg = msg + "" + UserName+"\n"
             if this.ask_input(msg,AnsBoxSize=this.ConfirmBoxSize) == "":
                 msg = ""
             this.queryParms()
@@ -219,9 +215,9 @@ def mainloop():
             this.Time = this.time_now().split('.')[0]
             msg = msg #+ this.Time +" "
             Shift = this.calculateShift()
-            msg = msg +  "姓名: " + UserName +"\n"
-            msg = msg +  "工序：" + Machine
-            msg = msg + "  产品：" + Product +"\n"
+            msg = msg + "姓名: " + UserName +"\n"
+            msg = msg + "工序：" + Machine + "\n"
+            msg = msg + "产品：" + Product +"\n"
             for each in this.BarcodeTable[this.thisBarcode][5:]:
                 if each != "" :
                     each = each.encode('cp936')
@@ -236,7 +232,7 @@ def mainloop():
             this.dataTag = this.dataIndex
             this.updateDB()
             this.printViaPrinter()
-            this.ask_input("请取打印单",AnsBoxSize=this.ConfirmBoxSize)
+            this.ask_input("\n\n"+"请取打印单"+"\n"+"操作结束！",AnsBoxSize=this.ConfirmBoxSize)
             #异常处理
         except UserWantRestart as UserRestart:
             print "User ask restart!"
