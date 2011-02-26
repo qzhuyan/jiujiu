@@ -98,11 +98,11 @@ class RecordClient():
         hour = datetime.datetime.now().hour
         if hour in range(15,17):
             self.shift = self.ShiftDict['Morning']
-        if hour in range(0,1):
+        elif hour in range(0,1):
             self.shift =  self.ShiftDict['Middle']
-        if hour == 23:
+        elif hour == 23:
             self.shift =  self.ShiftDict['Middle']
-        if hour in range(7,9):
+        elif hour in range(7,9):
             self.shift =  self.ShiftDict['Night']
         else:
             self.shift = ""
