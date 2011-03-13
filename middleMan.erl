@@ -4,11 +4,15 @@
 %%% @doc
 %%%
 %%% @end
-%%% Created : 28 Feb 2011 by  <Administrator@EZPC>
+%%% Created :  6 Mar 2011 by  <Administrator@EZPC>
 %%%-------------------------------------------------------------------
--module('DBI'). 
+-module(middleMan).
 
 -behaviour(gen_server).
+
+%% Compile and include
+-compile(export_all).
+-include("dbrecords.hrl").
 
 %% API
 -export([start_link/0]).
@@ -20,7 +24,6 @@
 -define(SERVER, ?MODULE). 
 
 -record(state, {}).
-
 
 %%%===================================================================
 %%% API
@@ -34,7 +37,10 @@
 %% @end
 %%--------------------------------------------------------------------
 start_link() ->
-    gen_server:start_link({local, ?SERVER}, ?MODULE, [], []).
+    start_link(5,5060).
+
+start_link(Workers,Port) ->
+    gen_server:start_link({local, ?SERVER}, ?MODULE, [5,5060], []).
 
 %%%===================================================================
 %%% gen_server callbacks
@@ -51,7 +57,16 @@ start_link() ->
 %%                     {stop, Reason}
 %% @end
 %%--------------------------------------------------------------------
-init([]) ->
+init([Num,LPort]) ->
+    case gen_tcp:listen(LPort,[binary,{active, false},{packet_size,200}]) of
+        {ok, ListenSock} ->
+            start_servers(Num,ListenSock),
+            {ok, Port} = inet:port(ListenSock),
+            Port;
+        {error,Reason} ->
+            {error,Reason}
+    end,
+
     {ok, #state{}}.
 
 %%--------------------------------------------------------------------
@@ -68,9 +83,6 @@ init([]) ->
 %%                                   {stop, Reason, State}
 %% @end
 %%--------------------------------------------------------------------
-handle_call({rec,Records},_From,State) ->
-    
-    
 handle_call(_Request, _From, State) ->
     Reply = ok,
     {reply, Reply, State}.
@@ -130,4 +142,108 @@ code_change(_OldVsn, State, _Extra) ->
 %%% Internal functions
 %%%===================================================================
 
--module(clientInterface).
+
+%%%
+%%% Version History
+%%%
+
+
+%%%
+%%% Include Files 
+%%%
+
+
+%%%
+%%% Functions
+%%%
+start() ->
+    start(2,5060).
+
+start(Num,LPort) ->
+    case gen_tcp:listen(LPort,[binary,{active, false},{packet_size,200}]) of
+        {ok, ListenSock} ->
+            start_servers(Num,ListenSock),
+            {ok, Port} = inet:port(ListenSock),
+            Port;
+        {error,Reason} ->
+            {error,Reason}
+    end.
+
+start_servers(0,_) ->
+    ok;
+
+start_servers(Num,LS) ->
+    spawn(?MODULE,server,[LS]),
+    start_servers(Num-1,LS).
+
+server(LS) ->
+    case gen_tcp:accept(LS) of
+        {ok,S} ->
+            loop(S),
+            ?MODULE:server(LS);
+        Other ->
+            io:format("accept returned ~w - goodbye!~n",[Other]),
+            ok
+    end.
+
+loop(S) ->
+    inet:setopts(S,[{active,once}]),
+    receive
+        {tcp,S,Data} ->
+            Answer = ?MODULE:process(Data), 
+	    io:format("Ans is ~p",[Answer]),
+            gen_tcp:send(S,erlang:term_to_binary(Answer)),
+            loop(S);
+        {tcp_closed,S} ->
+            io:format("Socket ~w closed [~w]~n",[S,self()]),
+            ok
+    end.
+
+%% Old_test_process(Data) ->
+%%     OUT = erlang:binary_to_term(Data),
+%%     io:format("We got ~p~n",[OUT]),
+%%     io:format("ÄãºÃ"),
+%%     io:format("We got ~p~n",[unicode:characters_to_list(OUT,unicode)]),
+%%     erlang:term_to_binary(OUT).
+
+process(In) ->
+    case erlang:binary_to_term(In) of
+	{req,[rec,Transcation],Record} ->
+	    io:format("Got req:rec ,~p ~p~n",[Transcation,Record]),
+	    Reply = ?MODULE:do_record(Record),
+	    {rep,[rec,Transcation],Reply};
+	{req,[get,Transcation],Record} ->
+	    io:format("Got req:rec ,~p ~p~n",[Transcation,Record]),
+	    Reply = ?MODULE:do_record(Record),
+	    {rep,[rec,Transcation],Reply};
+
+	Unkonwn ->
+	    io:format("unknow cmd!"),
+	    io:format("Got In: ~p~n",[Unkonwn]),
+	    {sta,unknow}
+    end.
+
+   
+do_record(Record) ->
+    R = #workRecord{
+      index = get_value(Record,datatag),
+      time = get_value(Record,time),
+      emp_no = get_value(Record,uid),
+      product = get_value(Record,product), 
+      machine = get_value(Record,machine), 
+      shift = get_value(Record,shift),
+      parms = get_value(Record,parms)
+     },
+    jiujiuDB:add_record(R).
+
+
+
+get_value(TupleList,Key) ->
+    {value,{Key,V},_}= lists:keytake(Key,1,TupleList),
+    V.
+    
+    
+
+
+       
+    

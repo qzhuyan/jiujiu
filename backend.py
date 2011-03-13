@@ -11,6 +11,7 @@ from config import JiuJiuConfig
 from printer import print_in_paper
 from JiuJiuException import UserWantRestart
 from JiuJiuFeedback import ErrorReporter
+from DBman import DBman
 import wx
 import time
 
@@ -138,9 +139,28 @@ class RecordClient():
 
     def time_now(self):
         return str(datetime.datetime.now())
-
+    
     def updateDB(self):
-            print "正在写入数据库.....\n"
+        WholeDict = dict(
+            datatag = int(self.dataTag),
+            time = encode(self.Time),
+            uid = str(self.userid),
+            username = self.username,
+            product = self.Product,
+            machine = self.Machine,
+            shift = self.shift,
+            parms = self.ParmDict.items()
+            )
+        #for parm in self.ParmDict:
+        #    WholeDict[unicode(parm,'cp936')] = self.ParmDict[parm]
+        DBman_test = DBman('127.0.0.1',5060,'tcp')
+        #TODO: check result
+        DBman_test.push(WholeDict.items())
+        
+
+        
+    def updateExcel(self):
+            print "正在写入EXCEL.....\n"
             rb = open_workbook(self.FileName)
             sheet = rb.sheets()[self.OutFileSheetNumber]
             wb = copy(rb)
@@ -165,7 +185,7 @@ class RecordClient():
 
             #保存到文件
             wb.save(self.FileName)
-            print "写入数据库完成！\n"
+            print "写入EXCEL完成！\n"
  
     def printViaPrinter(self,data=""):
         print "正在打印\n"
@@ -230,6 +250,7 @@ def mainloop():
             tmpTime = datetime.datetime.now()
             this.dataIndex = str(tmpTime.month)+str(tmpTime.day)+str(tmpTime.hour)+str(tmpTime.minute)+str(tmpTime.second)
             this.dataTag = this.dataIndex
+            this.updateExcel()
             this.updateDB()
             this.printViaPrinter()
             this.ask_input("\n\n"+"请取打印单"+"\n"+"操作结束！",AnsBoxSize=this.ConfirmBoxSize)
