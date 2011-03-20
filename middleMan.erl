@@ -210,12 +210,22 @@ process(In) ->
     case erlang:binary_to_term(In) of
 	{req,[rec,Transcation],Record} ->
 	    io:format("Got req:rec ,~p ~p~n",[Transcation,Record]),
-	    Reply = ?MODULE:do_record(Record),
+	    Reply = case is_tuple_list(Record) of
+			true ->
+			    case lists:keyfind(timetag,1,Record) of 
+				false ->
+				    missingTimeTag;
+				_Tuple ->
+				    ?MODULE:do_record(Record)
+			    end;
+			_ ->
+			    {notTupleList}
+		    end,
 	    {rep,[rec,Transcation],Reply};
-	{req,[get,Transcation],Record} ->
-	    io:format("Got req:rec ,~p ~p~n",[Transcation,Record]),
-	    Reply = ?MODULE:do_record(Record),
-	    {rep,[rec,Transcation],Reply};
+	{req,[get,Transcation],Key} ->
+	    io:format("Got req:get ,~p ~p~n",[Transcation,Key]),
+	    Reply = ?MODULE:do_get(Key),
+	    {rep,[get,Transcation],Reply};
 
 	Unkonwn ->
 	    io:format("unknow cmd!"),
@@ -224,26 +234,25 @@ process(In) ->
     end.
 
    
-do_record(Record) ->
-    R = #workRecord{
-      index = get_value(Record,datatag),
-      time = get_value(Record,time),
-      emp_no = get_value(Record,uid),
-      product = get_value(Record,product), 
-      machine = get_value(Record,machine), 
-      shift = get_value(Record,shift),
-      parms = get_value(Record,parms)
-     },
-    jiujiuDB:add_record(R).
+do_record(Record) when is_list(Record) ->
+    jiujiuDB:add_record(Record).
+
+do_get(Key) ->
+     jiujiuDB:get_record(Key).
 
 
 
 get_value(TupleList,Key) ->
     {value,{Key,V},_}= lists:keytake(Key,1,TupleList),
     V.
-    
-    
 
+is_tuple_list([]) ->    
+    true;
+is_tuple_list([{_,_}|T]) ->
+    is_tuple_list(T);
+is_tuple_list(NotTupleList) ->
+    notTupleList.
+    
 
        
     

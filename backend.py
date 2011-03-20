@@ -142,17 +142,16 @@ class RecordClient():
     
     def updateDB(self):
         WholeDict = dict(
-            datatag = int(self.dataTag),
+            timetag = int(self.dataTag),
             time = encode(self.Time),
-            uid = str(self.userid),
-            username = self.username,
-            product = self.Product,
-            machine = self.Machine,
-            shift = self.shift,
-            parms = self.ParmDict.items()
+            uid = encode(str(self.userid)),
+            username = encode(self.username),
+            product = encode(self.Product),
+            machine = encode(self.Machine),
+            shift = encode(self.shift),
             )
-        #for parm in self.ParmDict:
-        #    WholeDict[unicode(parm,'cp936')] = self.ParmDict[parm]
+        for parm in self.ParmDict:
+            WholeDict[parm] = self.ParmDict[parm]
         DBman_test = DBman('127.0.0.1',5060,'tcp')
         #TODO: check result
         DBman_test.push(WholeDict.items())
@@ -268,6 +267,7 @@ def mainloop():
                 CrashReport = "CrashReport:\t" + traceback.format_exc()
                 Reporter = ErrorReporter('mscame@gmail.com',"JiuJiu Error Report:\t"+Ver,CrashReport,"")
                 Reporter.sendmail()
+                ##TODO: if send mail falut, shall save log in mnesia?
             except Exception as ExcepReporter:
                 exceptionTraceback = sys.exc_info()
                 traceback.print_exc(file=sys.stdout)

@@ -13,9 +13,10 @@
 %% API
 -export([start_link/0,
 	 add_record/1,
+	 get_record/1,
 	 init_empty_tables/0,
 	 remove_all_tables/0,
-	 debug_all/0,]).
+	 debug_all/0]).
 
 %% gen_server callbacks
 -export([init/1,
@@ -36,6 +37,9 @@
 %%%===================================================================
 add_record(Record)->
     gen_server:call(?MODULE,{add,Record}).
+
+get_record(Key)->
+    gen_server:call(?MODULE,{get,Key}).
 	   
 init_empty_tables()->
     gen_server:call(?MODULE,initDB).
@@ -106,8 +110,19 @@ handle_call({match,RecordPattern}, _From, State) ->
     Reply = mnesia:transaction(fun()-> mnesia:match_object(RecordPattern) end),
     {reply,Reply,State};
 
+
+handle_call({get,Key}, _From, State) when is_integer(Key)->
+    {atomic,[Result]} = mnesia:transaction(fun()-> mnesia:read({workRecord,Key}) end),
+    [workRecord|Values] = tuple_to_list(Result),
+    Reply = lists:zip(mnesia:table_info(workRecord,attributes),Values),
+    {reply,Reply,State};
+
+%% handle_call({get,Key}, _From, State) when is_list(Key)->
+%%     Reply = mnesia:transaction(fun()-> mnesia:read({workRecord,list_to_integer(Key)}) end),
+%%     {reply,Reply,State};
+
 handle_call({add,Record}, _From, State) ->
-    {NewRowsToBeAdd,SortedRecord} = mapping_to_workRecord_table(Record),
+    {NewRowsToBeAdd,FormedRecord} = mapping_to_workRecord_table(Record),
     Reply = case NewRowsToBeAdd of 
 		      [] ->
 			  mnesia:transaction(fun()-> mnesia:write(FormedRecord) end);
@@ -119,7 +134,11 @@ handle_call({add,Record}, _From, State) ->
 
 
 handle_call({update_attrlist,Table,NewAttrList}, _From, State) ->
-    Reply = mnesia:transform_table(Table,ignore,NewAttrList), 
+    TransFun = fun(X) ->
+		       NewAttrs = NewAttrList -- X,
+		       list_to_tuple([tuple_to_list(X)|NewAttrs])
+	       end,
+    Reply = mnesia:transform_table(Table,TransFun,NewAttrList), 
     {reply, Reply, State};
 
 handle_call({mfa,?MFAMagicCode,[M,F,A]}, _From, State) ->
