@@ -1,28 +1,15 @@
 # coding=utf-8
 #!/usr/bin/env python
 
-import wx
+import wx 
 import time
 import winsound
 from config import JiuJiuConfig
-
-class FrontEnd_Old():
-    def __init__(self,Title,QueryMsg,DefaultValue="",Style=wx.OK|wx.CANCEL):
-        self.Title = Title
-        self.QueryMsg = QueryMsg
-        self.DefaultValue = DefaultValue
-        self.Style = Style
-
-    def queryUser(self,Msg,DefVal=""):
-        app = wx.PySimpleApp() 
-        dialog = wx.TextEntryDialog(None,Msg,self.Title,DefVal,style=wx.OK|wx.CANCEL)
-        # dialog.SetSizeWH(800,600)
-        # dialog.AnsBox()
-        dialog.ShowFullScreen(True)
-        if dialog.ShowModal() == wx.ID_OK: 
-           Value = dialog.GetValue() 
-        dialog.Destroy()
-        return Value
+class MainFrame(wx.Frame):
+    def __init__(self):
+        wx.Frame.__init__(self, None, -1, "My Friendly Window",
+                          (100, 100), (100, 100))
+        
 
 class BigBox(wx.Dialog):
     def __init__(self,Title,QueryMsg,DefaultValue="",Style=wx.OK|wx.CANCEL,Config="",QbgC="white",AnsBoxSize=10):
@@ -70,18 +57,14 @@ class BigBox(wx.Dialog):
                                style = wx.TE_PROCESS_ENTER |wx.ALIGN_CENTER ^(wx.TE_PASSWORD) )
 
         self.Bind(wx.EVT_TEXT_ENTER, self.OnEnterPushed, self.AnsBox)
-                
         self.AnsBox.SetForegroundColour('white') 
         self.AnsBox.SetBackgroundColour('black')
         self.AnsBox.SetFont(font_Ans)
         self.AnsBox.Bind(wx.wx.EVT_KEY_DOWN, self.OnKeyDown)
 
-        #self.button = wx.Button(self, wx.ID_OK, "OK",style=wx.ID_OK, pos=(50, 20)) 
-        #self.Bind(wx.EVT_BUTTON, self.OnClick, self.button)
-        #self.button.SetDefault()
+
         self.panelSizer.Add(QuestionText,10, border = 256, flag=wx.LEFT|wx.ALIGN_LEFT)
         self.panelSizer.Add(self.AnsBox,self.AnsBoxSize, border = 60 ,flag=wx.ALL|wx.ALIGN_CENTER)
-        #self.panelSizer.Add(self.button,1, flag=wx.EXPAND)
         self.SetSizer(self.panelSizer)
         self.Fit()
         self.ShowFullScreen(self.Is_FullScreen)
@@ -122,6 +105,8 @@ if __name__ == '__main__':
     thisconfig = JiuJiuConfig()
     # frontIns = FrontEnd("who are you?","yourName?",Config=thisconfig,AnsBoxSize=1)
     # frontIns.queryUser("Hello, man!\nNextLine\nNextLine\n435345\n435345\nDDDD\n")
+    mainFrame = MainFrame()
+    mainFrame.ShowFullScreen(True)
     frontIns = FrontEnd("who are you?","yourName?",Config=thisconfig,AnsBoxSize=1)
     frontIns.queryUser("Hello, man!\nNextLine\nNextLineDDDD\n")
 

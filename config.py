@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 # coding=utf-8
 from xlrd import open_workbook
-import xlrd
-import sys 
 
 #========Global==========#
 ConfigFilePath = 'config.xls'

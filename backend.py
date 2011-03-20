@@ -2,19 +2,18 @@
 #!/usr/bin/env python
 
 import datetime;
-import xlrd
 from xlutils.copy import copy
 from xlrd import open_workbook
-import sys, traceback
 from frontEnd import FrontEnd
+from frontEnd import MainFrame
 from config import JiuJiuConfig
 from printer import print_in_paper
 from JiuJiuException import UserWantRestart
 from JiuJiuFeedback import ErrorReporter
-import wx
+from wx import PySimpleApp
 import time
 
-Ver = "r1a03"
+Ver = "r1a05"
 
 class RecordClient():
     AskUserIdString = "\n\n  «Î ‰»Î‘±π§∫≈:\n"
@@ -52,6 +51,8 @@ class RecordClient():
         self.QbgC_BCODE = self.configData.get_GLCvalue('QbgC_BCODE')
         self.QbgC_PARM = self.configData.get_GLCvalue('QbgC_PARM')
         self.ConfirmBoxSize = int(self.configData.get_GLCvalue('FinalConfirmBoxSize'))
+        mainFrame = MainFrame()
+        mainFrame.ShowFullScreen(True)
         pass
 
     def gui_input(self,MSG,Title="UserInput",BgC="white",AnsBoxSize=10):
@@ -199,7 +200,7 @@ def encode(str):
     return unicode(str,'cp936')
 
 def mainloop():
-    app = wx.PySimpleApp()
+    app = PySimpleApp()
     this = RecordClient()
     while True :
         try:
@@ -239,6 +240,7 @@ def mainloop():
             continue
         
         except Exception as excep1:
+            import sys, traceback
             exceptionTraceback = sys.exc_info()
             traceback.print_exc(file=sys.stdout)
             #Send Error Report to user
