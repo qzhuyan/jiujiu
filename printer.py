@@ -30,6 +30,17 @@ def print_in_paper(str1):
         print "Printer not online"  # does not work!
 
 
+import win32api
+
+def win_print(filename, printer_name = None):
+    if not printer_name:
+        printer_name = win32print.GetDefaultPrinter()
+    out = '/d:"%s"' % (printer_name)
+    win32api.ShellExecute(0, "print", filename, out, ".", 0)
+
+
+
+
 if __name__ == '__main__':
     #str1 = u"ÄãºÃ"
     # put a year's monthly calendars into a string
