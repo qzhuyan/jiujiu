@@ -2,12 +2,13 @@
 import ImageFont, ImageDraw, Image
 from string import lower, upper
 FontSize = 72 # range 12-72
-ImgW = 250
-ImgH = 100
+ImgW = 850
+ImgH = 300
 
 
 extension="JPEG"
 
+printstring = "This is a barcode test"
 
 position = 8
 image = Image.new("1",(ImgW+position,ImgH))
@@ -15,9 +16,13 @@ image = Image.new("1",(ImgW+position,ImgH))
 draw = ImageDraw.Draw(image)
 
 # use a truetype font
-font = ImageFont.truetype("c39hrp36dltt.ttf", FontSize)
+barcodefont = ImageFont.truetype("c39hrp36dltt.ttf", FontSize)
+textfont = ImageFont.truetype("arial.ttf", FontSize)
 draw.rectangle(((0,0),(image.size[0],image.size[1])),fill=256)
-draw.text((10, 25), "*1234567*", font=font)
+
+draw.text((10, 25), printstring, font=textfont)
+(X,Y) = draw.textsize(printstring,font=textfont)
+draw.text((10, 25+Y), " *1234567* ", font=barcodefont)
 
 
 FileName = "printtmpfile"+"."+lower(extension)
