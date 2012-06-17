@@ -4,15 +4,22 @@
 
 
 def print_barcode_str(Barcode,Str):
+  FileName = gen_pic(Barcode,Str)
+  printer_print_file(FileName)
+
+def gen_pic(Barcode,Str):
   import ImageFont, ImageDraw, Image
   from string import lower, upper
-  
+
+  #Turn Barcode to string
   if type(Barcode) == type(1):
-    Barcode = str(11)
+    Barcode = str(Barcode)
+  #split lines
+  Lines = Str.split("\n")
     
   FontSize = 40 # range 12-72
   ImgW = 250
-  ImgH = 100
+  ImgH = 500
 
 
   extension="JPEG"
@@ -26,18 +33,24 @@ def print_barcode_str(Barcode,Str):
 
   # use a truetype font
   barcodefont = ImageFont.truetype("c39hrp36dltt.ttf", FontSize)
-  textfont = ImageFont.truetype("arial.ttf", FontSize-20)
+  textfont = ImageFont.truetype("simhei.ttf", FontSize)
+  
   draw.rectangle(((0,0),(image.size[0],image.size[1])),fill=256)
 
-  draw.text((10, 25), printstring, font=textfont)
-  (X,Y) = draw.textsize(printstring,font=textfont)
+  #Draw strings
+  #draw.text((10, 25), unicode(printstring,'UTF-8'), font=textfont)
+  (X,Y) = draw_lines(draw,Lines,(10,25),textfont)
+
+  #Draw barcodes
   draw.text((10, 25+Y), " *"+Barcode+"*", font=barcodefont)
 
 
   FileName = "printtmpfile"+"."+lower(extension)
 
   image.save(FileName,upper(extension))
+  return FileName
 
+def printer_print_file(FileName):
   import win32print
   import win32ui
   from PIL import Image, ImageWin
@@ -117,6 +130,15 @@ def print_barcode_str(Barcode,Str):
   hDC.DeleteDC ()
 
 
+def draw_lines(draw,Lines,pos,font):
+  (x,y) = pos
+  for Line in Lines:
+      draw.text((x, y), unicode(Line,'cp936'), font=font)
+      (newX,newY) = draw.textsize(Line,font=font)
+      y=y+newY
+  return (x,y)
+
 if __name__ == '__main__':
-  print_barcode_str(123456,"This is a test string")
+  #print_barcode_str(123456,"This is a test string\n hahah\nsafk\n")
+  gen_pic(123456,"测试打印")
   

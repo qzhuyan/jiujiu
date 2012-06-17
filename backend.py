@@ -8,6 +8,7 @@ from frontEnd import FrontEnd
 from frontEnd import MainFrame
 from config import JiuJiuConfig
 from printer import print_in_paper
+from barcode2 import print_barcode_str
 from JiuJiuException import UserWantRestart
 from JiuJiuFeedback import ErrorReporter
 from wx import PySimpleApp
@@ -186,7 +187,8 @@ class RecordClient():
                     data = data + each +": "+str(tmpV)+"\n"
 
         #data = "打印"
-        print_in_paper(data)
+        #print_in_paper(data)
+        print_barcode_str(self.dataTag,data)
         print "打印完成请取票\n"
 
 def check_and_format_id(s):
