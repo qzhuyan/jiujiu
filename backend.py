@@ -14,7 +14,7 @@ from JiuJiuFeedback import ErrorReporter
 from wx import PySimpleApp
 import time
 
-Ver = "r1a05"
+Ver = "r1a06"
 
 class RecordClient():
     AskUserIdString = "\n\n  请输入员工号:\n"
@@ -177,7 +177,7 @@ class RecordClient():
                    + self.Time +"\n"\
                    + "\n" \
                    + "姓名：" + self.username + "\n"\
-                   + "班次：" + self.shift + "\n"\
+                   + "班次： " + self.shift + "\n"\
                    + "产品：" + self.Product + "\n"\
                    + "工序： " + self.Machine + "\n\n"
             for each in self.BarcodeTable[self.thisBarcode][5:]:

@@ -40,9 +40,9 @@ class BigBox(wx.Dialog):
                            wx.NORMAL)
         lines = Msg.count('\n')
         if  lines > 5:
-            Dsize = 45
+            Dsize = 40
         else:
-            Dsize = 50 
+            Dsize = 60 
         
         font_Question = wx.Font(Dsize, wx.DECORATIVE, 
                                 wx.NORMAL,
