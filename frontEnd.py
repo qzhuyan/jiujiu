@@ -68,6 +68,7 @@ class BigBox(wx.Dialog):
         self.SetSizer(self.panelSizer)
         self.Fit()
         self.ShowFullScreen(self.Is_FullScreen)
+        Value = ""
         if self.ShowModal() == wx.ID_OK: 
             Value = self.AnsBox.GetValue()
         self.Destroy()
