@@ -52,6 +52,8 @@ class RecordClient():
         self.QbgC_BCODE = self.configData.get_GLCvalue('QbgC_BCODE')
         self.QbgC_PARM = self.configData.get_GLCvalue('QbgC_PARM')
         self.ConfirmBoxSize = int(self.configData.get_GLCvalue('FinalConfirmBoxSize'))
+        self.PrintStringSize = int(self.configData.get_GLCvalue('SizeOfString'))
+        self.PrintBarcodeSize = int(self.configData.get_GLCvalue('SizeOfBarcode'))
         mainFrame = MainFrame()
         mainFrame.ShowFullScreen(True)
         pass
@@ -188,7 +190,7 @@ class RecordClient():
 
         #data = "打印"
         #print_in_paper(data)
-        print_barcode_str(self.dataTag,data)
+        print_barcode_str(self.dataTag,data,self.PrintStringSize,self.PrintBarcodeSize)
         print "打印完成请取票\n"
 
 def check_and_format_id(s):

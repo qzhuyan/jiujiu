@@ -3,11 +3,11 @@
 
 
 
-def print_barcode_str(Barcode,Str):
-  FileName = gen_pic(Barcode,Str)
+def print_barcode_str(Barcode,Str,StrSize,BCSize):  #Size range 12-72
+  FileName = gen_pic(Barcode,Str,StrSize,BCSize)
   printer_print_file(FileName)
 
-def gen_pic(Barcode,Str):
+def gen_pic(Barcode,Str,StrSize,BCSize):
   import ImageFont, ImageDraw, Image
   from string import lower, upper
 
@@ -17,7 +17,7 @@ def gen_pic(Barcode,Str):
   #split lines
   Lines = Str.split("\n")
     
-  FontSize = 40 # range 12-72
+
   ImgW = 250
   ImgH = 500
 
@@ -32,8 +32,8 @@ def gen_pic(Barcode,Str):
   draw = ImageDraw.Draw(image)
 
   # use a truetype font
-  barcodefont = ImageFont.truetype("c39hrp36dltt.ttf", FontSize)
-  textfont = ImageFont.truetype("simhei.ttf", FontSize)
+  barcodefont = ImageFont.truetype("c39hrp36dltt.ttf", BCSize)
+  textfont = ImageFont.truetype("simhei.ttf", StrSize)
   
   draw.rectangle(((0,0),(image.size[0],image.size[1])),fill=256)
 

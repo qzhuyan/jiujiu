@@ -6,7 +6,7 @@
 import win32ui
 import win32print
 import win32con
-import calendar as cd            Dsize = 50 
+import calendar as cd            
 
 def print_in_paper(str1):
     # set monthly calendar so it will start with a Saturday
