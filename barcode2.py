@@ -3,13 +3,21 @@
 
 
 
-def print_barcode_str(Barcode,Str,StrSize,BCSize):  #Size range 12-72
-  FileName = gen_pic(Barcode,Str,StrSize,BCSize)
+def print_barcode_str(Barcode,Str,Config):  
+  FileName = gen_pic(Barcode,Str,Config)
   printer_print_file(FileName)
 
-def gen_pic(Barcode,Str,StrSize,BCSize):
+def gen_pic(Barcode,Str,Config):  #StrSize,BCSize):
   import ImageFont, ImageDraw, Image
   from string import lower, upper
+
+  #Get config data
+  StrSize=int(Config.get_GLCvalue('SizeOfString'))
+  BCSize = int(Config.get_GLCvalue('SizeOfBarcode'))
+  StrLeftMargin = int(Config.get_GLCvalue('StringLeftMargin'))
+  BCLeftMargin = int(Config.get_GLCvalue('BarcodeLeftMargin'))
+  EndMargin = int(Config.get_GLCvalue('EndMargin'))
+  EndSepreater = Config.get_GLCvalue('StringEndSepreater').encode('cp936')
 
   #Turn Barcode to string
   if type(Barcode) == type(1):
@@ -17,7 +25,6 @@ def gen_pic(Barcode,Str,StrSize,BCSize):
   #split lines
   Lines = Str.split("\n")
     
-
   ImgW = 250
   ImgH = 500
 
@@ -39,15 +46,15 @@ def gen_pic(Barcode,Str,StrSize,BCSize):
 
   #Draw strings
   #draw.text((10, 25), unicode(printstring,'UTF-8'), font=textfont)
-  (X,Y) = draw_lines(draw,Lines,(10,25),textfont)
+  (X,Y) = draw_lines(draw,Lines,(StrLeftMargin,25),textfont)
 
   #Draw barcodes
   BCStr =  " *"+Barcode+"*" #format barcode
-  draw.text((2, 25+Y),BCStr, font=barcodefont)
+  draw.text((BCLeftMargin, 25+Y),BCStr, font=barcodefont)
   (X2,Y2)=draw.textsize(BCStr,font=barcodefont)
 
   #Draw some empty area at the end of page.
-  draw.text((2, Y+Y2+25+5), "------", font=textfont)
+  draw.text((BCLeftMargin, Y+Y2+25+EndMargin), EndSepreater, font=textfont)
 
 
   FileName = "printtmpfile"+"."+lower(extension)
