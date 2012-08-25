@@ -191,6 +191,8 @@ class RecordClient():
         #data = "打印"
         #print_in_paper(data)
         print_barcode_str(self.dataTag,data,self.PrintStringSize,self.PrintBarcodeSize)
+        #print twice
+        print_barcode_str(self.dataTag,data,self.PrintStringSize,self.PrintBarcodeSize)
         print "打印完成请取票\n"
 
 def check_and_format_id(s):

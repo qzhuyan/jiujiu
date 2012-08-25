@@ -42,7 +42,12 @@ def gen_pic(Barcode,Str,StrSize,BCSize):
   (X,Y) = draw_lines(draw,Lines,(10,25),textfont)
 
   #Draw barcodes
-  draw.text((10, 25+Y), " *"+Barcode+"*", font=barcodefont)
+  BCStr =  " *"+Barcode+"*" #format barcode
+  draw.text((2, 25+Y),BCStr, font=barcodefont)
+  (X2,Y2)=draw.textsize(BCStr,font=barcodefont)
+
+  #Draw some empty area at the end of page.
+  draw.text((2, Y+Y2+25+5), "------", font=textfont)
 
 
   FileName = "printtmpfile"+"."+lower(extension)
