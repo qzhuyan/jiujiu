@@ -26,7 +26,7 @@ def gen_pic(Barcode,Str,Config):  #StrSize,BCSize):
   Lines = Str.split("\n")
     
   ImgW = 250
-  ImgH = 500
+  ImgH = 900
 
 
   extension="JPEG"
@@ -49,7 +49,7 @@ def gen_pic(Barcode,Str,Config):  #StrSize,BCSize):
   (X,Y) = draw_lines(draw,Lines,(StrLeftMargin,25),textfont)
 
   #Draw barcodes
-  BCStr =  " *"+Barcode+"*" #format barcode
+  BCStr =  "*"+Barcode+"*" #format barcode
   draw.text((BCLeftMargin, 25+Y),BCStr, font=barcodefont)
   (X2,Y2)=draw.textsize(BCStr,font=barcodefont)
 
