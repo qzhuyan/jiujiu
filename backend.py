@@ -13,6 +13,7 @@ from JiuJiuException import UserWantRestart
 from JiuJiuFeedback import ErrorReporter
 from wx import PySimpleApp
 import time
+import shutil
 
 Ver = "r1a06"
 
@@ -43,6 +44,7 @@ class RecordClient():
     def __init__(self):
         self.configData = JiuJiuConfig()
         self.FileName = self.configData.get_GLCvalue("OutPutTable").encode('cp936')
+        self.BackupFileName = self.configData.get_GLCvalue("BackupTable").encode('cp936')
         self.UserDict = self.configData.get_parsed_worksheet('EmploreeTable')
         self.BarcodeTable = self.configData.get_parsed_worksheet('BarcodeTable')
         self.DisplayMsgTable = self.configData.get_parsed_worksheet('DisplayMsgTable')
@@ -167,6 +169,12 @@ class RecordClient():
 
             #保存到文件
             wb.save(self.FileName)
+            #拷贝一份
+            try:
+                shutil.copyfile(self.FileName,self.BackupFileName)
+            except IOError:
+                print "备份文件只读"
+            
             print "写入数据库完成！\n"
  
     def printViaPrinter(self,data=""):
