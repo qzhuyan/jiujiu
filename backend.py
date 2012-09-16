@@ -196,11 +196,15 @@ class RecordClient():
 
         #data = "打印"
         #print_in_paper(data)
-        print_barcode_str(self.dataTag,data,self.configData)
-        #print twice
-        print_barcode_str(self.dataTag,data,self.configData)
+        print_times(self.dataTag,data,self.configData)
         print "打印完成请取票\n"
 
+def print_times(Tag,Data,Config):
+    PrintTimes=int(Config.get_GLCvalue('PrintTimes'))
+    for i in range(0,PrintTimes):
+        print_barcode_str(Tag,Data,Config)
+    
+    
 def check_and_format_id(s):
     try: 
         float(s)

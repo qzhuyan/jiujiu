@@ -18,6 +18,7 @@ def gen_pic(Barcode,Str,Config):  #StrSize,BCSize):
   BCLeftMargin = int(Config.get_GLCvalue('BarcodeLeftMargin'))
   EndMargin = int(Config.get_GLCvalue('EndMargin'))
   EndSepreater = Config.get_GLCvalue('StringEndSepreater').encode('cp936')
+  IsPrintBC = int(Config.get_GLCvalue('IsPrintBC'))
 
   #Turn Barcode to string
   if type(Barcode) == type(1):
@@ -49,9 +50,11 @@ def gen_pic(Barcode,Str,Config):  #StrSize,BCSize):
   (X,Y) = draw_lines(draw,Lines,(StrLeftMargin,25),textfont)
 
   #Draw barcodes
-  BCStr =  " *"+Barcode+"*" #format barcode
-  draw.text((BCLeftMargin, 25+Y),BCStr, font=barcodefont)
-  (X2,Y2)=draw.textsize(BCStr,font=barcodefont)
+  (X2,Y2) = (0,0)
+  if IsPrintBC == 0:
+    BCStr =  " *"+Barcode+"*" #format barcode
+    draw.text((BCLeftMargin, 25+Y),BCStr, font=barcodefont)
+    (X2,Y2)=draw.textsize(BCStr,font=barcodefont)
 
   #Draw some empty area at the end of page.
   draw.text((BCLeftMargin, Y+Y2+25+EndMargin), EndSepreater, font=textfont)
