@@ -37,7 +37,7 @@ def gen_pic(Barcode,Str,Config):  #StrSize,BCSize):
 
   TextFontName = Config.get_GLCvalue('TextTTF').encode('cp936')
 
-  position = 8
+  position = int(Config.get_GLCvalue('PageLeftMargin'))
   image = Image.new("1",(ImgW+position,ImgH))
   # Create drawer
   draw = ImageDraw.Draw(image)

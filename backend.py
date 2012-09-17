@@ -16,7 +16,7 @@ from wx import PySimpleApp
 import time
 import shutil
 
-Ver = "r1a06"
+Ver = "r1a08"
 
 class RecordClient():
     AskUserIdString = "\n\n  «Î ‰»Î‘±π§∫≈:\n"
