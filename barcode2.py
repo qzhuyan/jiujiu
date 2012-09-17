@@ -35,7 +35,7 @@ def gen_pic(Barcode,Str,Config):  #StrSize,BCSize):
 
   printstring = Str
 
-  TextFontName = Config.get_GLCvalue('TextTTF')
+  TextFontName = Config.get_GLCvalue('TextTTF').encode('cp936')
 
   position = 8
   image = Image.new("1",(ImgW+position,ImgH))
