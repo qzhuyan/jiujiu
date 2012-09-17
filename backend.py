@@ -10,6 +10,7 @@ from config import JiuJiuConfig
 from printer import print_in_paper
 from barcode2 import print_barcode_str
 from JiuJiuException import UserWantRestart
+from JiuJiuException import ErrorToUser
 from JiuJiuFeedback import ErrorReporter
 from wx import PySimpleApp
 import time
@@ -253,6 +254,15 @@ def mainloop():
             #“Ï≥£¥¶¿Ì
         except UserWantRestart as UserRestart:
             print "User ask restart!"
+            continue
+
+        except ErrorToUser as UserError:
+            ErrorInfo = "!!!Error!!!" + str(UserError)
+            #print it to backscreen
+            print ErrorInfo
+            #show it to user as well
+            dialog = FrontEnd("","",Config = this.configData)
+            dialog.showInfo2User(ErrorInfo)
             continue
         
         except Exception as excep1:

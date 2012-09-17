@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-
+from JiuJiuException import ErrorToUser
 
 
 
@@ -19,6 +19,9 @@ def gen_pic(Barcode,Str,Config):  #StrSize,BCSize):
   EndMargin = int(Config.get_GLCvalue('EndMargin'))
   EndSepreater = Config.get_GLCvalue('StringEndSepreater').encode('cp936')
   IsPrintBC = int(Config.get_GLCvalue('IsPrintBC'))
+  ImgW = int(Config.get_GLCvalue('PageWidth'))
+  ImgH = int(Config.get_GLCvalue('PageHight'))
+
 
   #Turn Barcode to string
   if type(Barcode) == type(1):
@@ -26,13 +29,13 @@ def gen_pic(Barcode,Str,Config):  #StrSize,BCSize):
   #split lines
   Lines = Str.split("\n")
     
-  ImgW = 250
-  ImgH = 900
 
 
   extension="JPEG"
 
   printstring = Str
+
+  TextFontName = Config.get_GLCvalue('TextTTF')
 
   position = 8
   image = Image.new("1",(ImgW+position,ImgH))
@@ -40,8 +43,13 @@ def gen_pic(Barcode,Str,Config):  #StrSize,BCSize):
   draw = ImageDraw.Draw(image)
 
   # use a truetype font
-  barcodefont = ImageFont.truetype("c39hrp36dltt.ttf", BCSize)
-  textfont = ImageFont.truetype("simhei.ttf", StrSize)
+
+  try:
+    barcodefont = ImageFont.truetype("c39hrp36dltt.ttf", BCSize)
+    textfont = ImageFont.truetype(TextFontName, StrSize)
+  except IOError as ErrIO :
+    raise ErrorToUser(TextFontName+" not found!")
+
   
   draw.rectangle(((0,0),(image.size[0],image.size[1])),fill=256)
 
